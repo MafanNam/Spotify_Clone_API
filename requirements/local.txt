@@ -1,0 +1,10 @@
+-r base.txt
+
+
+
+psycopg2-binary==2.9.9
+
+flake8==7.0.0
+black==24.4.2
+isort==6.0.0b2
+pre-commit==3.7.1
