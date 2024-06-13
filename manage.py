@@ -2,6 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+
 from environ import Env
 
 env = Env()
@@ -21,5 +22,5 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
