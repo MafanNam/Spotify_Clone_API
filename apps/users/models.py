@@ -47,11 +47,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         default="default/profile.jpg",
     )
-    country = models.CharField(
+    country = CountryField(
         verbose_name=_("country"),
-        max_length=200,
+        blank_label="Select Country",
         default="UA",
-        choices=CountryField().choices + [("", "Select Country")],
     )
     subscription_plan = models.ForeignKey(
         SubscriptionPlan,

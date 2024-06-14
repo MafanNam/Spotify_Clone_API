@@ -11,7 +11,6 @@ class SubscriptionPlan(TimeStampedModel):
     days_exp = models.PositiveIntegerField(_("Days expiration"), default=0)
     feature = models.ManyToManyField(
         "Feature",
-        null=True,
         blank=True,
         related_name="subscription_plan",
     )

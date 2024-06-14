@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 
 
 def get_path_upload_image_user(instance, filename):
-    return os.path.join("users", str(instance.user.id), filename)
+    return os.path.join("users", str(instance), filename)
 
 
 def get_path_upload_image_artist(instance, filename):
