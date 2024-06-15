@@ -38,6 +38,12 @@ INSTALLED_APPS = [
     "apps.users",
     "apps.subscriptions",
     "apps.payments",
+    "apps.artists",
+    "apps.audio",
+    "apps.albums",
+    "apps.playlists",
+    "apps.analytics",
+    "apps.other",
 ]
 
 MIDDLEWARE = [

@@ -1,8 +1,7 @@
-from django.shortcuts import render
+from rest_framework import generics, permissions
 from rest_framework.generics import get_object_or_404
 
-from apps.payments.api.serializers import PaymentListSerializer, PaymentCreateSerializer, TaxSerializer
-from rest_framework import generics, permissions
+from apps.payments.api.serializers import PaymentCreateSerializer, PaymentListSerializer, TaxSerializer
 from apps.payments.models import Payment, Tax
 
 

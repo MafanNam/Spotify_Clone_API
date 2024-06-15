@@ -4,7 +4,6 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 
 from .forms import UserChangeForm, UserCreationForm
-from .models import Artist
 
 User = get_user_model()
 
@@ -70,10 +69,3 @@ class UserAdmin(BaseUserAdmin):
         ),
     )
     search_fields = ["email", "display_name"]
-
-
-@admin.register(Artist)
-class ArtistAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "display_name", "image", "is_verify"]
-    list_display_links = ["id", "user", "display_name"]
-    list_filter = ["is_verify"]
