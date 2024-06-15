@@ -202,7 +202,7 @@ DJOSER = {
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": env.list(
         "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS",
         default=[
-            "http://localhost:3000/auth/google",
+            "http://localhost:3000",
         ],
     ),
     "ACTIVATION_URL": "activate/{uid}/{token}",

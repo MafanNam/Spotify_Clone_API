@@ -81,12 +81,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     class Meta:
-        verbose_name = _("user")
-        verbose_name_plural = _("users")
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
 
     def __str__(self):
         """String representation of the user."""
         return self.email
+
+    def save(self, *args, **kwargs):
+        email_username, _ = self.email.split("@", 1)
+        if self.display_name == "" or self.display_name is None:
+            self.username = email_username
+        super(User, self).save(*args, **kwargs)
 
     @property
     def get_profile(self):
@@ -108,6 +114,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Artist(TimeStampedModel):
+    """
+    Artist model.
+    """
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="artist")
     first_name = models.CharField(verbose_name=_("first name"), max_length=100)
     last_name = models.CharField(verbose_name=_("last name"), max_length=100)
@@ -127,8 +137,8 @@ class Artist(TimeStampedModel):
     is_verify = models.BooleanField(_("is verify"), default=False)
 
     class Meta:
-        verbose_name = _("artist")
-        verbose_name_plural = _("artists")
+        verbose_name = _("Artist")
+        verbose_name_plural = _("Artists")
         ordering = ["-created_at", "-updated_at"]
 
     def __str__(self):
