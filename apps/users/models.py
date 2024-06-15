@@ -65,6 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         choices=TYPE_PROFILE_CHOICES,
         default=TYPE_PROFILE_CHOICES.user,
     )
+    followers = models.ManyToManyField("self", symmetrical=False, related_name="following", blank=True)
     is_premium = models.BooleanField(_("is premium"), default=False)
     is_spam_email = models.BooleanField(_("is spam email"), default=False)
 
@@ -111,6 +112,19 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.type_profile == TYPE_PROFILE_CHOICES.artist:
             return hasattr(self, "artist")
         return False
+
+    def follow(self, user):
+        self.followers.add(user)
+
+    def unfollow(self, user):
+        self.followers.remove(user)
+
+    def check_following(self, user_id):
+        return self.followers.filter(id=user_id).exists()
+
+    @property
+    def follower_count(self):
+        return self.followers.count()
 
 
 class Artist(TimeStampedModel):

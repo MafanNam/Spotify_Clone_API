@@ -49,7 +49,7 @@ class UserAdmin(BaseUserAdmin):
             },
         ),
         (_("Important Dates"), {"fields": ("last_login", "date_joined")}),
-        (_("Other Info"), {"fields": ("image", "is_premium", "is_spam_email")}),
+        (_("Other Info"), {"fields": ("image", "followers", "is_premium", "is_spam_email")}),
     )
     add_fieldsets = (
         (

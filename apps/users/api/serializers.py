@@ -17,10 +17,21 @@ class CustomUserSerializer(CountryFieldMixin, UserSerializer):
     type_profile = serializers.CharField(source="get_type_profile_display", read_only=True)
     gender = serializers.CharField(source="get_gender_display", read_only=True)
     country = CountryField(name_only=True)
+    followers_count = serializers.IntegerField(source="followers.count", read_only=True)
 
     class Meta(UserSerializer.Meta):
         model = User
-        fields = ("id", "email", "display_name", "gender", "country", "image", "type_profile", "is_premium")
+        fields = (
+            "id",
+            "email",
+            "display_name",
+            "gender",
+            "country",
+            "image",
+            "type_profile",
+            "is_premium",
+            "followers_count",
+        )
         read_only_fields = ("email", "type_profile", "is_premium")
 
 
