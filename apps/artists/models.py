@@ -1,6 +1,6 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth import get_user_model
 
 from apps.core.models import TimeStampedModel
 from apps.core.services import get_path_upload_image_artist, validate_image_size
@@ -36,6 +36,11 @@ class Artist(TimeStampedModel):
         verbose_name_plural = _("Artists")
         ordering = ["-created_at", "-updated_at"]
 
+    def save(self, *args, **kwargs):
+        if self.display_name == "" or self.display_name is None:
+            self.display_name = f"{self.first_name} {self.last_name}"
+        super(Artist, self).save(*args, **kwargs)
+
     def __str__(self):
         """String representation of the artist."""
         return self.display_name
@@ -50,9 +55,7 @@ class License(TimeStampedModel):
     License model.
     """
 
-    artist = models.ForeignKey(
-        Artist, on_delete=models.CASCADE, related_name="licenses"
-    )
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name="licenses")
     name = models.CharField(verbose_name=_("name"), max_length=255)
     text = models.TextField(verbose_name=_("text"), max_length=1000)
 

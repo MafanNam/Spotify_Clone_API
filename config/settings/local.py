@@ -7,10 +7,9 @@ SECRET_KEY = env("SECRET_KEY", default="django-insecure-a77ec^w-=8mz71we3on8ld&^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG", default=True)
 
-
-INSTALLED_APPS += [
-    "debug_toolbar",
-]
+# INSTALLED_APPS += [
+#     "debug_toolbar",
+# ]
 
 MIDDLEWARE += [
     # TODO: Delete JWTFromCookieMiddleware
@@ -20,7 +19,7 @@ MIDDLEWARE += [
 
 MIDDLEWARE = [
     "django.middleware.gzip.GZipMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    # "debug_toolbar.middleware.DebugToolbarMiddleware",
 ] + MIDDLEWARE
 
 # EMAIL

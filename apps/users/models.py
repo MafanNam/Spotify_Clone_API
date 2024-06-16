@@ -55,6 +55,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         SubscriptionPlan,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         default="",
         related_name="users",
     )
@@ -91,7 +92,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         email_username, _ = self.email.split("@", 1)
         if self.display_name == "" or self.display_name is None:
-            self.username = email_username
+            self.display_name = email_username
         super(User, self).save(*args, **kwargs)
 
     @property
@@ -103,14 +104,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.artist
 
     def has_user_profile(self):
-        if self.type_profile == TYPE_PROFILE_CHOICES.user:
-            return hasattr(self, "user")
-        return False
+        return self.type_profile == TYPE_PROFILE_CHOICES.user
 
     def has_artist_profile(self):
-        if self.type_profile == TYPE_PROFILE_CHOICES.artist:
-            return hasattr(self, "artist")
-        return False
+        return self.type_profile == TYPE_PROFILE_CHOICES.artist
 
     def follow(self, user):
         self.followers.add(user)

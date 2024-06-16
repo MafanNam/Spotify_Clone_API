@@ -19,7 +19,7 @@ class CustomUserManager(BaseUserManager):
             email = self.normalize_email(email)
             self.email_validator(email)
         else:
-            raise ValueError(_("Users must have an email address."))
+            raise ValueError(_("User must have an email address."))
 
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
