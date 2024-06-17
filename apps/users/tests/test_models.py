@@ -5,14 +5,14 @@ User = get_user_model()
 
 
 def create_user(
-        email="test@email.com",
-        password="testpass123",
-        is_active=False,
-        display_name='test',
-        gender="male",
-        country="UA",
-        type_profile="user",
-        is_premium=False,
+    email="test@email.com",
+    password="testpass123",
+    is_active=False,
+    display_name="test",
+    gender="male",
+    country="UA",
+    type_profile="user",
+    is_premium=False,
 ):
     return User.objects.create_user(
         email=email,
@@ -27,16 +27,16 @@ def create_user(
 
 
 def create_superuser(
-        email="superuser@email.com",
-        password="testpass123",
-        is_active=True,
-        is_staff=True,
-        is_superuser=True,
-        is_premium=False,
-        display_name='superuser',
-        gender="male",
-        country="UA",
-        type_profile="user",
+    email="superuser@email.com",
+    password="testpass123",
+    is_active=True,
+    is_staff=True,
+    is_superuser=True,
+    is_premium=False,
+    display_name="superuser",
+    gender="male",
+    country="UA",
+    type_profile="user",
 ):
     return User.objects.create_superuser(
         email=email,
@@ -121,7 +121,7 @@ class UserModelTests(TestCase):
         user = create_user("goood@email.com")
         self.assertEqual(str(user), "goood@email.com")
 
-    def test_functions(self):
+    def test_functions_profile(self):
         """Test user functions model."""
         user = create_user("user@email.com", type_profile="user")
         user_artist = create_user("artist@email.com", type_profile="artist")
@@ -133,3 +133,26 @@ class UserModelTests(TestCase):
         self.assertTrue(user_artist.has_artist_profile())
         self.assertFalse(user_artist.has_user_profile())
         self.assertTrue(user_artist.get_profile)
+
+    def test_functions_followers(self):
+        """Test user functions model."""
+        user = create_user("user@email.com", type_profile="user")
+        user_artist = create_user("artist@email.com", type_profile="artist")
+
+        user.follow(user_artist)
+        user_artist.follow(user)
+
+        self.assertEqual(user.follower_count, 1)
+        self.assertEqual(user_artist.follower_count, 1)
+
+        self.assertTrue(user.check_following(user_artist.id))
+        self.assertTrue(user_artist.check_following(user.id))
+
+        user.unfollow(user_artist)
+        user_artist.unfollow(user)
+
+        self.assertEqual(user.followers.count(), 0)
+        self.assertEqual(user_artist.followers.count(), 0)
+
+        self.assertFalse(user.check_following(user_artist.id))
+        self.assertFalse(user_artist.check_following(user.id))

@@ -22,7 +22,8 @@ class UserChangeFormTest(TestCase):
             "gender": "male",
             "type_profile": "user",
             "country": "UA",
-            "date_joined": user.date_joined}
+            "date_joined": user.date_joined,
+        }
         form = UserChangeForm(instance=user, data=form_data)
         self.assertTrue(form.is_valid())
 

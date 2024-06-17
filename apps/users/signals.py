@@ -1,7 +1,8 @@
-from apps.artists.models import Artist
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
+from apps.artists.models import Artist
 
 from .models import TYPE_PROFILE_CHOICES
 
@@ -15,7 +16,9 @@ def create_artist_profile(sender, instance, created, **kwargs):
         if created and not kwargs.get("raw", False):
             if instance.type_profile == TYPE_PROFILE_CHOICES.artist:
                 Artist.objects.create(
-                    user=instance, display_name=instance.display_name, image=instance.image,
+                    user=instance,
+                    display_name=instance.display_name,
+                    image=instance.image,
                 )
 
 

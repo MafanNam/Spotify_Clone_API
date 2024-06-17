@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "social_django",
     "corsheaders",
     "drf_spectacular",
+    "colorfield",
     # LOCAL_APPS
     "apps.users",
     "apps.subscriptions",
