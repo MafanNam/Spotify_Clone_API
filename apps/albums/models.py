@@ -1,3 +1,4 @@
+from autoslug import AutoSlugField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -19,6 +20,7 @@ class Album(TimeStampedModel):
         default="",
     )
     title = models.CharField(_("title"), max_length=255, unique=True)
+    slug = AutoSlugField(populate_from="title", unique=True)
     image = models.ImageField(
         verbose_name=_("image"),
         upload_to=get_path_upload_image_album,

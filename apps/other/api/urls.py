@@ -6,5 +6,5 @@ app_name = "other"
 
 urlpatterns = [
     path("genres/", views.GenreListAPIView.as_view(), name="genre-list"),
-    path("genres/<int:pk>/", views.GenreDetailAPIView.as_view(), name="genre-detail"),
+    path("genres/<slug:slug>/", views.GenreDetailAPIView.as_view(), name="genre-detail"),
 ]

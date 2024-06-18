@@ -8,27 +8,27 @@ def get_path_upload_image_user(instance, filename):
 
 
 def get_path_upload_image_artist(instance, filename):
-    return os.path.join("artists", f"{str(instance.first_name)}_{str(instance.last_name)}_{str(instance.id)}", filename)
+    return os.path.join("artists", f"{str(instance.slug)}", filename)
 
 
 def get_path_upload_image_genre(instance, filename):
-    return os.path.join("genres", f"{str(instance.name)}_{str(instance.id)}", filename)
+    return os.path.join("genres", f"{str(instance.slug)}", filename)
 
 
 def get_path_upload_image_album(instance, filename):
-    return os.path.join("albums", f"{str(instance.title)}_{str(instance.id)}", filename)
+    return os.path.join("albums", f"{str(instance.slug)}", filename)
 
 
 def get_path_upload_image_playlist(instance, filename):
-    return os.path.join("playlists", f"{str(instance.title)}_{str(instance.id)}", filename)
+    return os.path.join("playlists", f"{str(instance.slug)}", filename)
 
 
 def get_path_upload_image_track(instance, filename):
     return os.path.join(
         "artists",
-        f"{str(instance.artist.first_name)}_{str(instance.artist.last_name)}_{str(instance.artist.id)}",
+        f"{str(instance.artist.slug)}",
         "tracks",
-        f"{instance.id}",
+        f"{instance.slug}",
         filename,
     )
 
@@ -36,9 +36,9 @@ def get_path_upload_image_track(instance, filename):
 def get_path_upload_track(instance, filename):
     return os.path.join(
         "artists",
-        f"{str(instance.artist.first_name)}_{str(instance.artist.last_name)}_{str(instance.artist.id)}",
+        f"{str(instance.artist.slug)}",
         "tracks",
-        f"{instance.id}",
+        f"{instance.slug}",
         filename,
     )
 

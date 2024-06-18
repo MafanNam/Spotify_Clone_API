@@ -10,23 +10,16 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("artists", "0001_initial"),
+        ("playlists", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="artist",
+            model_name="playlist",
             name="user",
-            field=models.OneToOneField(
-                on_delete=django.db.models.deletion.CASCADE, related_name="artist", to=settings.AUTH_USER_MODEL
-            ),
-        ),
-        migrations.AddField(
-            model_name="license",
-            name="artist",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, related_name="licenses", to="artists.artist"
+                on_delete=django.db.models.deletion.CASCADE, related_name="playlists", to=settings.AUTH_USER_MODEL
             ),
         ),
     ]

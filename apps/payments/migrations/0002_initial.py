@@ -10,23 +10,23 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("artists", "0001_initial"),
+        ("payments", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="artist",
+            model_name="payment",
             name="user",
-            field=models.OneToOneField(
-                on_delete=django.db.models.deletion.CASCADE, related_name="artist", to=settings.AUTH_USER_MODEL
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, related_name="payments", to=settings.AUTH_USER_MODEL
             ),
         ),
         migrations.AddField(
-            model_name="license",
-            name="artist",
+            model_name="payment",
+            name="tax",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, related_name="licenses", to="artists.artist"
+                null=True, on_delete=django.db.models.deletion.SET_NULL, related_name="payments", to="payments.tax"
             ),
         ),
     ]

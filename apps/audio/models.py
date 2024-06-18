@@ -1,3 +1,4 @@
+from autoslug import AutoSlugField
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
@@ -26,6 +27,7 @@ class Track(TimeStampedModel):
         default="",
     )
     title = models.CharField(_("title"), max_length=255, unique=True)
+    slug = AutoSlugField(populate_from="title", unique=True)
     duration = models.DurationField(_("duration"), null=True, blank=True)
     image = models.ImageField(
         verbose_name=_("image"),

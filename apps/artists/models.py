@@ -1,3 +1,4 @@
+from autoslug import AutoSlugField
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -19,9 +20,11 @@ class Artist(TimeStampedModel):
     display_name = models.CharField(
         verbose_name=_("display name"),
         max_length=100,
+        blank=True,
         unique=True,
         db_index=True,
     )
+    slug = AutoSlugField(populate_from="display_name", unique=True)
     image = models.ImageField(
         verbose_name=_("image"),
         upload_to=get_path_upload_image_artist,

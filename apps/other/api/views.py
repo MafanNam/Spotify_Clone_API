@@ -17,8 +17,10 @@ class GenreListAPIView(generics.ListCreateAPIView):
 
     def get_permissions(self):
         if self.request.method == "GET":
-            return [permissions.AllowAny]
-        return [permissions.IsAdminUser]
+            self.permission_classes = [permissions.AllowAny]
+        else:
+            self.permission_classes = [permissions.IsAdminUser]
+        return super().get_permissions()
 
 
 class GenreDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -30,8 +32,11 @@ class GenreDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    lookup_field = "slug"
 
     def get_permissions(self):
         if self.request.method == "GET":
-            return [permissions.AllowAny]
-        return [permissions.IsAdminUser]
+            self.permission_classes = [permissions.AllowAny]
+        else:
+            self.permission_classes = [permissions.IsAdminUser]
+        return super().get_permissions()

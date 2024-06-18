@@ -1,3 +1,4 @@
+from autoslug import AutoSlugField
 from colorfield.fields import ColorField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -8,6 +9,7 @@ from apps.core.services import get_path_upload_image_genre, validate_image_size
 
 class Genre(TimeStampedModel):
     name = models.CharField(_("name"), max_length=255, unique=True)
+    slug = AutoSlugField(populate_from="name", unique=True)
     image = models.ImageField(
         verbose_name=_("image"),
         upload_to=get_path_upload_image_genre,

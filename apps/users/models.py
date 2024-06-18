@@ -32,7 +32,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         db_index=True,
         unique=True,
     )
-    display_name = models.CharField(verbose_name=_("display name"), max_length=100)
+    display_name = models.CharField(
+        verbose_name=_("display name"),
+        max_length=100,
+        blank=True,
+    )
     gender = models.CharField(
         verbose_name=_("gender"),
         max_length=20,
