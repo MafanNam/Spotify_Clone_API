@@ -7,6 +7,10 @@ from apps.core.services import get_path_upload_image_album, validate_image_size
 
 
 class Album(TimeStampedModel):
+    """
+    Album model.
+    """
+
     artist = models.ForeignKey(
         Artist,
         on_delete=models.CASCADE,

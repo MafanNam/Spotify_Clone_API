@@ -19,6 +19,10 @@ def get_path_upload_image_album(instance, filename):
     return os.path.join("albums", f"{str(instance.title)}_{str(instance.id)}", filename)
 
 
+def get_path_upload_image_playlist(instance, filename):
+    return os.path.join("playlists", f"{str(instance.title)}_{str(instance.id)}", filename)
+
+
 def get_path_upload_image_track(instance, filename):
     return os.path.join(
         "artists",
