@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from model_utils import Choices
+from shortuuidfield import ShortUUIDField
 
 from apps.core.models import TimeStampedModel
 
@@ -26,6 +27,7 @@ class Payment(TimeStampedModel):
     Payment model.
     """
 
+    payment_id = ShortUUIDField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="payments")
     method = models.CharField(
         _("Payment Method"),

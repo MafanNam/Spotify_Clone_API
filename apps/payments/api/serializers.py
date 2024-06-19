@@ -16,7 +16,7 @@ class PaymentListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Payment
-        fields = ["id", "user", "method", "status", "price", "tax", "total_price"]
+        fields = ["id", "payment_id", "user", "method", "status", "price", "tax", "total_price"]
         extra_kwargs = {"total_price": {"read_only": True}}
 
 
