@@ -1,8 +1,11 @@
+from datetime import timedelta
+
 from autoslug import AutoSlugField
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from mutagen import File
 
 from apps.albums.models import Album
 from apps.artists.models import Artist, License
@@ -67,7 +70,6 @@ class Track(TimeStampedModel):
         verbose_name=_("file track"),
         upload_to=get_path_upload_track,
         validators=[validate_track_size],
-        default="",
     )
     plays_count = models.PositiveBigIntegerField(_("plays count"), default=0)
     downloads_count = models.PositiveBigIntegerField(_("downloads count"), default=0)
@@ -90,6 +92,14 @@ class Track(TimeStampedModel):
         verbose_name = _("Track")
         verbose_name_plural = _("Tracks")
         ordering = ["-created_at", "-updated_at"]
+
+    def save(self, *args, **kwargs):
+        if self.file and not self.duration:
+            audio = File(self.file)
+            if audio is not None:
+                print(audio.info)
+                self.duration = timedelta(seconds=audio.info.length)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title

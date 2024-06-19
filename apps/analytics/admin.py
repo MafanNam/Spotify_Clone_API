@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Similarity, TrackPlays
+from .models import Similarity, TrackPlayed
 
 
 @admin.register(Similarity)
@@ -12,8 +12,8 @@ class SimilarityAdmin(admin.ModelAdmin):
     ordering = ("-score", "-created_at")
 
 
-@admin.register(TrackPlays)
-class TrackPlaysAdmin(admin.ModelAdmin):
+@admin.register(TrackPlayed)
+class TrackPlayedAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "track", "viewer_ip")
     list_display_links = ("id", "user")
     list_filter = ("viewer_ip", "created_at")
