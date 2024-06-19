@@ -1,8 +1,7 @@
-from django.shortcuts import render
+from rest_framework import generics, permissions
 from rest_framework.generics import get_object_or_404
 
-from apps.payments.api.serializers import PaymentListSerializer, PaymentCreateSerializer, TaxSerializer
-from rest_framework import generics, permissions
+from apps.payments.api.serializers import PaymentCreateSerializer, PaymentListSerializer, TaxSerializer
 from apps.payments.models import Payment, Tax
 
 
@@ -27,14 +26,15 @@ class PaymentListCreateAPIView(generics.ListCreateAPIView):
 
 class PaymentRetrieveAPIView(generics.RetrieveAPIView):
     """
-    Payment retrieve view. Only for authenticated users.
+    Payment retrieve view. Only for authenticated users and owner of the payment.
     """
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = PaymentListSerializer
+    lookup_field = "payment_id"
 
     def get_object(self):
-        return get_object_or_404(self.request.user.payments, id=self.kwargs["pk"])
+        return get_object_or_404(self.request.user.payments, payment_id=self.kwargs["payment_id"])
 
 
 class TaxListAPIView(generics.ListAPIView):

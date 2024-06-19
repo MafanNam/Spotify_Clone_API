@@ -47,14 +47,16 @@ down-v:
 volume:
 	docker volume inspect local_postgres_data
 
-djinni-db:
-	docker compose -f local.yml exec postgres psql --username=mafan --dbname=djinni-live
+spotify-db:
+	docker compose -f local.yml exec postgres psql --username=mafan --dbname=spotify-live
 
 cov:
-	docker compose -f local.yml run --rm server pytest -p no:warnings --cov=. -v
-
+	coverage run --source='.' --omit='*/migrations/*.py,*/asgi.py,*/wsgi.py,*/manage.py' manage.py test
 cov-gen:
-	docker compose -f local.yml run --rm server pytest -p no:warnings --cov=. --cov-report html
+	coverage html
 
-tests:
-	docker compose -f local.yml run --rm server pytest
+cov-docker:
+	docker compose -f local.yml run --rm server coverage run --source='.' --omit='*/migrations/*.py,*/asgi.py,*/wsgi.py,*/manage.py' manage.py test
+
+cov-gen-docker:
+	docker compose -f local.yml run --rm server coverage html

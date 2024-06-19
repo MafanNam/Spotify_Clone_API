@@ -34,10 +34,17 @@ INSTALLED_APPS = [
     "social_django",
     "corsheaders",
     "drf_spectacular",
+    "colorfield",
     # LOCAL_APPS
     "apps.users",
     "apps.subscriptions",
     "apps.payments",
+    "apps.artists",
+    "apps.audio",
+    "apps.albums",
+    "apps.playlists",
+    "apps.analytics",
+    "apps.other",
 ]
 
 MIDDLEWARE = [

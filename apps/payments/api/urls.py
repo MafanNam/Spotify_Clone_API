@@ -6,6 +6,6 @@ app_name = "payments"
 
 urlpatterns = [
     path("", views.PaymentListCreateAPIView.as_view(), name="payment-list-create"),
-    path("<int:pk>/", views.PaymentRetrieveAPIView.as_view(), name="payment-retrieve"),
+    path("<str:payment_id>/", views.PaymentRetrieveAPIView.as_view(), name="payment-retrieve"),
     path("tax/", views.TaxListAPIView.as_view(), name="tax-list"),
 ]

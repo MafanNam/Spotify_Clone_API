@@ -10,7 +10,7 @@ User = get_user_model()
 class CustomUserCreatePasswordRetypeSerializer(CountryFieldMixin, UserCreatePasswordRetypeSerializer):
     class Meta(UserCreatePasswordRetypeSerializer.Meta):
         model = User
-        fields = ("id", "email", "display_name", "gender", "country", "image", "password")
+        fields = ("id", "email", "display_name", "gender", "country", "type_profile", "image", "password")
 
 
 class CustomUserSerializer(CountryFieldMixin, UserSerializer):

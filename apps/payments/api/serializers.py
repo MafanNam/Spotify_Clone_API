@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from apps.payments.models import Payment, Tax
 from apps.users.api.serializers import ShortCustomUserSerializer
 
@@ -6,11 +7,7 @@ from apps.users.api.serializers import ShortCustomUserSerializer
 class TaxSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tax
-        fields = [
-            "id",
-            "name",
-            "value"
-        ]
+        fields = ["id", "name", "value"]
 
 
 class PaymentListSerializer(serializers.ModelSerializer):
@@ -19,18 +16,8 @@ class PaymentListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Payment
-        fields = [
-            "id",
-            "user",
-            "method",
-            "status",
-            "price",
-            "tax",
-            "total_price"
-        ]
-        extra_kwargs = {
-            "total_price": {"read_only": True}
-        }
+        fields = ["id", "payment_id", "user", "method", "status", "price", "tax", "total_price"]
+        extra_kwargs = {"total_price": {"read_only": True}}
 
 
 class PaymentCreateSerializer(PaymentListSerializer):

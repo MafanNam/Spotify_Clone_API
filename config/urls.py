@@ -9,6 +9,8 @@ urlpatterns = [
     path("api/v1/", include("apps.users.api.urls"), name="users"),
     path("api/v1/subscriptions/", include("apps.subscriptions.api.urls"), name="subscriptions"),
     path("api/v1/payments/", include("apps.payments.api.urls"), name="payments"),
+    path("api/v1/others/", include("apps.other.api.urls"), name="others"),
+    path("api/v1/artists/", include("apps.artists.api.urls"), name="artists"),
 ]
 
 # Media Assets

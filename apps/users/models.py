@@ -5,9 +5,8 @@ from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from model_utils import Choices
 
-from apps.core.services import get_path_upload_image_artist, get_path_upload_image_user, validate_image_size
+from apps.core.services import get_path_upload_image_user, validate_image_size
 
-from ..core.models import TimeStampedModel
 from ..subscriptions.models import SubscriptionPlan
 from .managers import CustomUserManager
 
@@ -33,7 +32,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         db_index=True,
         unique=True,
     )
-    display_name = models.CharField(verbose_name=_("display name"), max_length=100)
+    display_name = models.CharField(
+        verbose_name=_("display name"),
+        max_length=100,
+        blank=True,
+    )
     gender = models.CharField(
         verbose_name=_("gender"),
         max_length=20,
@@ -56,6 +59,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         SubscriptionPlan,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         default="",
         related_name="users",
     )
@@ -92,7 +96,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         email_username, _ = self.email.split("@", 1)
         if self.display_name == "" or self.display_name is None:
-            self.username = email_username
+            self.display_name = email_username
         super(User, self).save(*args, **kwargs)
 
     @property
@@ -104,14 +108,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.artist
 
     def has_user_profile(self):
-        if self.type_profile == TYPE_PROFILE_CHOICES.user:
-            return hasattr(self, "user")
-        return False
+        return self.type_profile == TYPE_PROFILE_CHOICES.user
 
     def has_artist_profile(self):
-        if self.type_profile == TYPE_PROFILE_CHOICES.artist:
-            return hasattr(self, "artist")
-        return False
+        return self.type_profile == TYPE_PROFILE_CHOICES.artist
 
     def follow(self, user):
         self.followers.add(user)
@@ -125,40 +125,3 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def follower_count(self):
         return self.followers.count()
-
-
-class Artist(TimeStampedModel):
-    """
-    Artist model.
-    """
-
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="artist")
-    first_name = models.CharField(verbose_name=_("first name"), max_length=100)
-    last_name = models.CharField(verbose_name=_("last name"), max_length=100)
-    display_name = models.CharField(
-        verbose_name=_("display name"),
-        max_length=100,
-        unique=True,
-        db_index=True,
-    )
-    image = models.ImageField(
-        verbose_name=_("image"),
-        upload_to=get_path_upload_image_artist,
-        validators=[validate_image_size],
-        blank=True,
-        default="default/artist.jpg",
-    )
-    is_verify = models.BooleanField(_("is verify"), default=False)
-
-    class Meta:
-        verbose_name = _("Artist")
-        verbose_name_plural = _("Artists")
-        ordering = ["-created_at", "-updated_at"]
-
-    def __str__(self):
-        """String representation of the artist."""
-        return self.display_name
-
-    @property
-    def get_full_name(self):
-        return f"{self.first_name} {self.last_name}"
