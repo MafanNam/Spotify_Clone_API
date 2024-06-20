@@ -49,6 +49,7 @@ class TrackSerializer(serializers.ModelSerializer):
 class ShortTrackSerializer(TrackSerializer):
     artist = ShortArtistSerializer(read_only=True, many=False)
     genre = GenreSerializer(read_only=True, many=False)
+    # TODO: add album later
     # album = ShortAlbumSerializer(read_only=True, many=False)
 
     class Meta:
