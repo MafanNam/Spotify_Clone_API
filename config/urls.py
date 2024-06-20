@@ -13,6 +13,7 @@ urlpatterns = [
     path("api/v1/artists/", include("apps.artists.api.urls"), name="artists"),
     path("api/v1/tracks/", include("apps.audio.api.urls"), name="tracks"),
     path("api/v1/albums/", include("apps.albums.api.urls"), name="albums"),
+    path("api/v1/playlists/", include("apps.playlists.api.urls"), name="playlists"),
 ]
 
 # Media Assets
