@@ -8,12 +8,25 @@ from apps.other.api.serializers import GenreSerializer
 from apps.other.models import Genre
 
 
+class ShortAlbumSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Album
+        fields = [
+            "id",
+            "slug",
+            "title",
+            "image",
+            "is_private",
+        ]
+
+
 class TrackSerializer(serializers.ModelSerializer):
     artist = ShortArtistSerializer(read_only=True, many=False)
     license = LicenseSerializer(read_only=True, many=False)
     genre = GenreSerializer(read_only=True, many=False)
 
-    # album = ShortAlbumSerializer(read_only=True, many=False)
+    # album = serializers.SlugRelatedField(read_only=True, slug_field="slug")
+    album = ShortAlbumSerializer(read_only=True, many=False)
 
     class Meta:
         model = Track
@@ -47,11 +60,6 @@ class TrackSerializer(serializers.ModelSerializer):
 
 
 class ShortTrackSerializer(TrackSerializer):
-    artist = ShortArtistSerializer(read_only=True, many=False)
-    genre = GenreSerializer(read_only=True, many=False)
-    # TODO: add album later
-    # album = ShortAlbumSerializer(read_only=True, many=False)
-
     class Meta:
         model = Track
         fields = [
