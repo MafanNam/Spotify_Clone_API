@@ -12,6 +12,10 @@ from apps.core.permissions import ArtistRequiredPermission, IsPremiumUserPermiss
 
 
 class TrackListAPIView(generics.ListAPIView):
+    """
+    Track list. Public permission.
+    """
+
     permission_classes = [permissions.AllowAny]
     serializer_class = ShortTrackSerializer
 
@@ -20,6 +24,10 @@ class TrackListAPIView(generics.ListAPIView):
 
 
 class TrackDetailAPIView(generics.RetrieveAPIView):
+    """
+    Track detail. Public permission.
+    """
+
     permission_classes = [permissions.AllowAny]
     serializer_class = TrackSerializer
     lookup_field = "slug"
@@ -29,7 +37,10 @@ class TrackDetailAPIView(generics.RetrieveAPIView):
 
 
 class TrackRecentlyPlayedAPIView(generics.ListAPIView):
-    """List all recently played track"""
+    """
+    List all recently played track.
+    Only for authenticated user.
+    """
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ShortTrackSerializer
@@ -39,6 +50,11 @@ class TrackRecentlyPlayedAPIView(generics.ListAPIView):
 
 
 class TrackMyListCreateAPIView(generics.ListCreateAPIView):
+    """
+    List all my tracks.
+    Only for authenticated user(artist).
+    """
+
     permission_classes = [ArtistRequiredPermission]
 
     def get_serializer_class(self):
@@ -54,6 +70,10 @@ class TrackMyListCreateAPIView(generics.ListCreateAPIView):
 
 
 class TrackMyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Track detail. Only for authenticated user(artist).
+    """
+
     permission_classes = [ArtistRequiredPermission]
     serializer_class = TrackCreateSerializer
     lookup_field = "slug"
@@ -63,7 +83,7 @@ class TrackMyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class StreamingTrackAPIView(generics.RetrieveAPIView):
-    """Listen track"""
+    """Listen track. Public permission."""
 
     serializer_class = None
     permission_classes = [permissions.AllowAny]
@@ -95,6 +115,10 @@ class StreamingTrackAPIView(generics.RetrieveAPIView):
 
 
 class StreamingMyTrackAPIView(StreamingTrackAPIView):
+    """
+    Listen my track. Only for authenticated user(artist).
+    """
+
     permission_classes = [ArtistRequiredPermission]
 
     def get_object(self):
@@ -102,7 +126,7 @@ class StreamingMyTrackAPIView(StreamingTrackAPIView):
 
 
 class DownloadTrackAPIView(generics.RetrieveAPIView):
-    """Download track. Only for premium users"""
+    """Download track. Only for premium user."""
 
     serializer_class = None
     permission_classes = [IsPremiumUserPermission]
@@ -126,7 +150,7 @@ class DownloadTrackAPIView(generics.RetrieveAPIView):
 
 
 class TrackLikeAPIView(generics.UpdateAPIView):
-    """Like track. Only for premium users"""
+    """Like track. Only for authenticated user."""
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = None
@@ -148,7 +172,7 @@ class TrackLikeAPIView(generics.UpdateAPIView):
 
 
 class TrackUnlikeAPIView(generics.UpdateAPIView):
-    """Unlike track. Only for premium users"""
+    """Unlike track. Only for authenticated user."""
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = None

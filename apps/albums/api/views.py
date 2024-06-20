@@ -6,6 +6,10 @@ from apps.core.permissions import ArtistRequiredPermission
 
 
 class AlbumListCreateAPIView(generics.ListAPIView):
+    """
+    Album List API View. Public view.
+    """
+
     serializer_class = AlbumSerializer
     permission_classes = [permissions.AllowAny]
 
@@ -14,6 +18,10 @@ class AlbumListCreateAPIView(generics.ListAPIView):
 
 
 class AlbumDetailAPIView(generics.RetrieveAPIView):
+    """
+    Album Detail API View. Public view.
+    """
+
     serializer_class = AlbumDetailSerializer
     permission_classes = [permissions.AllowAny]
     lookup_field = "slug"
@@ -23,6 +31,11 @@ class AlbumDetailAPIView(generics.RetrieveAPIView):
 
 
 class MyAlbumListCreateAPIView(generics.ListCreateAPIView):
+    """
+    My Album List Create API View.
+    Private view, only for authenticated users and owner.
+    """
+
     serializer_class = AlbumDetailSerializer
     permission_classes = [ArtistRequiredPermission]
 
@@ -34,6 +47,11 @@ class MyAlbumListCreateAPIView(generics.ListCreateAPIView):
 
 
 class MyAlbumDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    My Album Detail API View.
+    Private view, only for authenticated users and owner.
+    """
+
     serializer_class = AlbumSerializer
     permission_classes = [ArtistRequiredPermission]
     lookup_field = "slug"

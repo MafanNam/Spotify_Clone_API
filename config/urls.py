@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
+# API URLs
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/", include("apps.users.api.urls"), name="users"),
@@ -14,6 +15,7 @@ urlpatterns = [
     path("api/v1/tracks/", include("apps.audio.api.urls"), name="tracks"),
     path("api/v1/albums/", include("apps.albums.api.urls"), name="albums"),
     path("api/v1/playlists/", include("apps.playlists.api.urls"), name="playlists"),
+    path("api/v1/analytics/", include("apps.analytics.api.urls"), name="analytics"),
 ]
 
 # Media Assets
