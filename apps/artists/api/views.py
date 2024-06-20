@@ -84,9 +84,8 @@ class LicenseRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
     License Retrieve Update Destroy API View. Only for artist.
     """
 
-    queryset = License.objects.all()
     serializer_class = LicenseSerializer
     permission_classes = [ArtistRequiredPermission]
 
     def get_queryset(self):
-        return self.queryset.filter(artist=self.request.user.artist)
+        return License.objects.filter(artist=self.request.user.artist)

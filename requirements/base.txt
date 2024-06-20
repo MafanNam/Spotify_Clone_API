@@ -27,3 +27,4 @@ celery==5.4.0
 flower==2.0.1
 gunicorn==22.0.0
 coverage==7.5.3
+mutagen==1.47.0
