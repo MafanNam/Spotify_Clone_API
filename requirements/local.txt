@@ -7,4 +7,7 @@ psycopg2-binary==2.9.9
 flake8==7.0.0
 black==24.4.2
 isort==6.0.0b2
+pyupgrade==3.16.0
+autoflake==2.3.1
+check-jsonschema==0.28.5
 pre-commit==3.7.1

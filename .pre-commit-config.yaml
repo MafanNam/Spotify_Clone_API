@@ -5,19 +5,48 @@ repos:
     rev: v4.5.0
     hooks:
       - id: check-yaml
+      - id: check-merge-conflict
       - id: end-of-file-fixer
+      - id: detect-private-key
+      - id: debug-statements
       - id: trailing-whitespace
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.16.0
+    hooks:
+      - id: pyupgrade
+        args: [ --py311-plus ]
+
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 24.2.0
+    rev: 24.4.2
     hooks:
       - id: black
+        exclude: ^.*\b(migrations)\b.*$
         language_version: python3.11
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.3.1
+    hooks:
+      - id: autoflake
+
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
       - id: isort
         name: isort (python)
+
   - repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
+    rev: 7.1.0
     hooks:
       - id: flake8
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.28.5
+    hooks:
+      - id: check-github-workflows
+      - id: check-dependabot
+
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      - id: python-use-type-annotations
+      - id: python-check-blanket-noqa

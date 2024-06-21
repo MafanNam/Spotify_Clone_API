@@ -57,7 +57,7 @@ class UserManagerTests(TestCase):
         """Test creating a user is successful."""
         user = create_user(email="goood@email.com")
 
-        self.assertEquals(user.email, "goood@email.com")
+        self.assertEqual(user.email, "goood@email.com")
 
         self.assertFalse(user.is_active)
         self.assertFalse(user.is_staff)

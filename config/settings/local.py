@@ -1,4 +1,4 @@
-from .base import *  # noqa
+from .base import *  # noqa: F401
 from .base import env
 
 # SECURITY WARNING: keep the secret key used in production secret!

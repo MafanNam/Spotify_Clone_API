@@ -54,7 +54,7 @@ class Payment(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.total_price = self.price + self.tax.value
-        super(Payment, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class Tax(TimeStampedModel):

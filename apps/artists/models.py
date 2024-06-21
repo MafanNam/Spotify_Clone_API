@@ -42,7 +42,7 @@ class Artist(TimeStampedModel):
     def save(self, *args, **kwargs):
         if self.display_name == "" or self.display_name is None:
             self.display_name = f"{self.first_name} {self.last_name}"
-        super(Artist, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         """String representation of the artist."""

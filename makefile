@@ -1,5 +1,7 @@
+#clean:
+#	pre-commit run --all-files
 clean:
-	pre-commit run --all-files
+	pre-commit run --color=always --all-files
 build:
 	docker compose -f local.yml up --build -d --remove-orphans
 build-log:
