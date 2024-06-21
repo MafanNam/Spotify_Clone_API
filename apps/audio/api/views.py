@@ -1,7 +1,7 @@
 import os.path
 
 from django.http import FileResponse, Http404
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, views
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
@@ -91,12 +91,12 @@ class TrackMyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         return Track.objects.get(slug=self.kwargs.get("slug"), artist=self.request.user.artist)
 
 
-class StreamingTrackAPIView(generics.RetrieveAPIView):
+class StreamingTrackAPIView(views.APIView):
     """Listen track. Public permission."""
 
     serializer_class = None
     permission_classes = [permissions.AllowAny]
-    lookup_field = "slug"
+    http_method_names = ["get"]
 
     def get_object(self):
         return get_object_or_404(Track, slug=self.kwargs.get("slug"), is_private=False)
@@ -106,7 +106,7 @@ class StreamingTrackAPIView(generics.RetrieveAPIView):
         track.plays_count += 1
         track.save()
 
-    def retrieve(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         track = self.get_object()
         viewer_ip = request.META.get("REMOTE_ADDR", None)
 
@@ -129,23 +129,25 @@ class StreamingMyTrackAPIView(StreamingTrackAPIView):
     """
 
     permission_classes = [ArtistRequiredPermission]
+    http_method_names = ["get"]
 
     def get_object(self):
         return get_object_or_404(Track, slug=self.kwargs.get("slug"), artist=self.request.user.artist)
 
 
-class DownloadTrackAPIView(generics.RetrieveAPIView):
+class DownloadTrackAPIView(views.APIView):
     """Download track. Only for premium user."""
 
     serializer_class = None
     permission_classes = [IsPremiumUserPermission]
+    http_method_names = ["get"]
 
     @staticmethod
     def set_download(track):
         track.downloads_count += 1
         track.save()
 
-    def retrieve(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         track = get_object_or_404(Track, slug=self.kwargs.get("slug"), is_private=False)
         if os.path.exists(track.file.path):
             self.set_download(track)
@@ -158,18 +160,17 @@ class DownloadTrackAPIView(generics.RetrieveAPIView):
             return Http404
 
 
-class TrackLikeAPIView(generics.UpdateAPIView):
+class TrackLikeAPIView(views.APIView):
     """Like track. Only for authenticated user."""
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = None
-    lookup_field = "slug"
-    http_method_names = ["patch"]
+    http_method_names = ["post"]
 
     def get_object(self):
         return get_object_or_404(Track, slug=self.kwargs.get("slug"), is_private=False)
 
-    def patch(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         track = self.get_object()
         if request.user not in track.user_of_likes.all():
             track.likes_count += 1
@@ -180,18 +181,17 @@ class TrackLikeAPIView(generics.UpdateAPIView):
         return Response({"detail": "You have already liked this track."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TrackUnlikeAPIView(generics.UpdateAPIView):
+class TrackUnlikeAPIView(views.APIView):
     """Unlike track. Only for authenticated user."""
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = None
-    lookup_field = "slug"
-    http_method_names = ["patch"]
+    http_method_names = ["delete"]
 
     def get_object(self):
         return get_object_or_404(Track, slug=self.kwargs.get("slug"), is_private=False)
 
-    def patch(self, request, *args, **kwargs):
+    def delete(self, request, *args, **kwargs):
         track = self.get_object()
         if request.user in track.user_of_likes.all():
             track.user_of_likes.remove(request.user)

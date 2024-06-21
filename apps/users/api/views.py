@@ -149,6 +149,7 @@ class LogoutView(views.APIView):
         return response
 
 
+@extend_schema(tags=["User Spam"])
 class SpamEmailEveryWeek(views.APIView):
     """
     Send spam emails every week.
@@ -175,3 +176,49 @@ class SpamEmailEveryWeek(views.APIView):
             return Response({"msg": "You unsubscribed from the newsletter"}, status.HTTP_200_OK)
 
         return Response({"msg": "You are not subscribed to the newsletter"}, status.HTTP_200_OK)
+
+
+@extend_schema(tags=["User Following"])
+class UserFollowAPIView(views.APIView):
+    """
+    Follow users. Only users who have not followed can follow.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
+
+    def post(self, request, user_id) -> Response:
+        user = request.user
+        user_to_follow = get_object_or_404(User, id=user_id)
+
+        if user == user_to_follow:
+            return Response({"msg": "You can not follow yourself"}, status.HTTP_400_BAD_REQUEST)
+
+        if user_to_follow.check_following(user.id):
+            return Response({"msg": "You have already followed this user"}, status.HTTP_400_BAD_REQUEST)
+
+        user_to_follow.follow(user)
+        return Response({"msg": "You have followed this user"}, status.HTTP_200_OK)
+
+
+@extend_schema(tags=["User Following"])
+class UserUnfollowAPIView(views.APIView):
+    """
+    Unfollow users. Only users who have followed can unfollow.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
+
+    def post(self, request, user_id) -> Response:
+        user = request.user
+        user_to_unfollow = get_object_or_404(User, id=user_id)
+
+        if user == user_to_unfollow:
+            return Response({"msg": "You can not unfollow yourself"}, status.HTTP_400_BAD_REQUEST)
+
+        if not user_to_unfollow.check_following(user.id):
+            return Response({"msg": "You have not followed this user"}, status.HTTP_400_BAD_REQUEST)
+
+        user_to_unfollow.unfollow(user)
+        return Response({"msg": "You have unfollowed this user"}, status.HTTP_200_OK)
