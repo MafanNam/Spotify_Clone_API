@@ -3,9 +3,9 @@
 clean:
 	pre-commit run --color=always --all-files
 build:
-	docker compose -f local.yml up --build -d --remove-orphans
+	docker compose -f local.yml --env-file .envs/.local/django.env up --build -d --remove-orphans
 build-log:
-	docker compose -f local.yml up --build
+	docker compose -f local.yml --env-file .envs/.local/django.env up --build
 
 up:
 	docker compose -f local.yml up -d

@@ -28,8 +28,12 @@ INSTALLED_APPS = [
     # THIRD_PARTY_APPS
     "rest_framework",
     "rest_framework_simplejwt",
+    "django_celery_results",
+    "django_celery_beat",
+    "django_filters",
     "django_cleanup",
     "django_countries",
+    "djcelery_email",
     "djoser",
     "social_django",
     "corsheaders",
@@ -151,6 +155,27 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
 
+# CELERY
+CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://localhost:6379/0")
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_RESULT_BACKEND_MAX_RETRIES = 10
+CELERY_TASK_SEND_SENT_EVENT = True
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+if USE_TZ:
+    CELERY_TIMEZONE = TIME_ZONE
+
+# CELERY RESULT SETTINGS
+CELERY_RESULT_EXTENDED = True
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="django-db")
+CELERY_CACHE_BACKEND = env("CELERY_CACHE_BACKEND", default="django-cache")
+
+# CELERY BEAT SETTINGS
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
 # DOC
 SPECTACULAR_SETTINGS = {
     "TITLE": "Spotify Clone API",
@@ -164,6 +189,7 @@ SPECTACULAR_SETTINGS = {
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        # TODO: Uncomment this line to enable JWT authentication by HttpOnly Cookie
         # "apps.users.authentication.CustomJWTAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
@@ -241,3 +267,21 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     "openid",
 ]
 SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ["first_name", "last_name"]
+
+
+# CACHE
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+    }
+}
+
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": env("REDIS_CACHE_LOCATION", default="redis://localhost:6379/1"),
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         },
+#     }
+# }
