@@ -38,15 +38,24 @@ class TrackDetailAPIView(generics.RetrieveAPIView):
 
 class TrackRecentlyPlayedAPIView(generics.ListAPIView):
     """
-    List all recently played track.
-    Only for authenticated user.
+    List all recently played track. Public view.
     """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     serializer_class = ShortTrackSerializer
 
     def get_queryset(self):
-        return Track.objects.filter(private=False, plays__user=self.request.user).order_by("-plays__played_at")[:10]
+        viewer_ip = self.request.META.get("REMOTE_ADDR", None)
+
+        if self.request.user.is_authenticated:
+            return Track.objects.filter(is_private=False, plays__user=self.request.user).order_by("-plays__played_at")[
+                :10
+            ]
+
+        if viewer_ip:
+            return Track.objects.filter(is_private=False, plays__viewer_ip=viewer_ip).order_by("-plays__played_at")[:10]
+
+        return Track.objects.none()
 
 
 class TrackMyListCreateAPIView(generics.ListCreateAPIView):
