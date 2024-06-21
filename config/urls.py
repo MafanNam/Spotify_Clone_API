@@ -32,3 +32,8 @@ urlpatterns += [
 urlpatterns += [
     path("__debug__/", include("debug_toolbar.urls")),
 ]
+
+# Silk Integration
+urlpatterns += [
+    path("silk/", include("silk.urls", namespace="silk")),
+]
