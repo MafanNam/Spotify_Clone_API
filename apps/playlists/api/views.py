@@ -30,9 +30,6 @@ class PlaylistDetailAPIView(generics.RetrieveAPIView):
     def get_queryset(self):
         return Playlist.objects.filter(is_private=False)
 
-    # def get_object(self):
-    #     return get_object_or_404(Playlist, slug=self.kwargs.get("slug"), is_private=False)
-
     def retrieve(self, request, *args, **kwargs):
         playlist = self.get_object()
         viewer_ip = request.META.get("REMOTE_ADDR", None)
@@ -49,6 +46,7 @@ class PlaylistDetailAPIView(generics.RetrieveAPIView):
 class PlaylistRecentlyPlayedAPIView(generics.ListAPIView):
     """
     List all recently played playlist. Public view.
+    Filter last played 10 playlist by users or anonymous(by viewer IP).
     """
 
     permission_classes = [permissions.AllowAny]

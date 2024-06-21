@@ -39,6 +39,7 @@ class TrackDetailAPIView(generics.RetrieveAPIView):
 class TrackRecentlyPlayedAPIView(generics.ListAPIView):
     """
     List all recently played track. Public view.
+    Filter last played 10 tracks by users or anonymous(by viewer IP).
     """
 
     permission_classes = [permissions.AllowAny]
@@ -161,7 +162,11 @@ class DownloadTrackAPIView(views.APIView):
 
 
 class TrackLikeAPIView(views.APIView):
-    """Like track. Only for authenticated user."""
+    """
+    Like track. Only for authenticated user.
+    - If user has not liked the track, add the like and increase the likes count and return status `HTTP_200_OK`.
+    - If user has already liked the track, return a message and status `HTTP_400_BAD_REQUEST`.
+    """
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = None
@@ -178,11 +183,15 @@ class TrackLikeAPIView(views.APIView):
             track.save()
             return Response({"likes_count": track.likes_count}, status.HTTP_200_OK)
         # If user has already liked the track, return a message
-        return Response({"detail": "You have already liked this track."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"msg": "You have already liked this track."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TrackUnlikeAPIView(views.APIView):
-    """Unlike track. Only for authenticated user."""
+    """
+    Unlike track. Only for authenticated user.
+    - If user has not liked the track, return a message and status `HTTP_400_BAD_REQUEST`.
+    - If user has liked the track, remove the like and decrease the likes count and return status `HTTP_200_OK`.
+    """
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = None
@@ -198,4 +207,4 @@ class TrackUnlikeAPIView(views.APIView):
             track.likes_count -= 1
             track.save()
             return Response({"likes_count": track.likes_count}, status.HTTP_200_OK)
-        return Response({"detail": "You have not liked this track."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"msg": "You have not liked this track."}, status=status.HTTP_400_BAD_REQUEST)
