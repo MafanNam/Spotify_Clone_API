@@ -149,10 +149,17 @@ class LogoutView(views.APIView):
         return response
 
 
+@extend_schema(tags=["User Spam"])
 class SpamEmailEveryWeek(views.APIView):
     """
     Send spam emails every week.
     This class allows users to subscribe and unsubscribe from a weekly newsletter.
+    - `POST`: Subscribe to the newsletter.
+    1. Check if user is already subscribed to the newsletter. If yes, return an error message `HTTP_400_BAD_REQUEST`.
+    2. Subscribe user `HTTP_200_OK`.
+    - `DELETE`: Unsubscribe from the newsletter.
+    1. Check if user is already unsubscribed from the newsletter. If yes, return an error message `HTTP_400_BAD_REQUEST`.
+    2. Unsubscribe user `HTTP_200_OK`.
     """
 
     permission_classes = [permissions.IsAuthenticated]
@@ -165,7 +172,7 @@ class SpamEmailEveryWeek(views.APIView):
             user.save()
             return Response({"msg": "You subscribed to the newsletter"}, status.HTTP_200_OK)
 
-        return Response({"msg": "You are already subscribed to the newsletter"}, status.HTTP_200_OK)
+        return Response({"msg": "You are already subscribed to the newsletter"}, status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request) -> Response:
         user = request.user
@@ -174,4 +181,56 @@ class SpamEmailEveryWeek(views.APIView):
             user.save()
             return Response({"msg": "You unsubscribed from the newsletter"}, status.HTTP_200_OK)
 
-        return Response({"msg": "You are not subscribed to the newsletter"}, status.HTTP_200_OK)
+        return Response({"msg": "You are not subscribed to the newsletter"}, status.HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(tags=["User Following"])
+class UserFollowAPIView(views.APIView):
+    """
+    Follow users. Only users who have not followed can follow.
+    1. Check if user is following yourself. If yes, return an error message `HTTP_400_BAD_REQUEST`.
+    2. Check if user has already followed. If yes, return an error message `HTTP_400_BAD_REQUEST`.
+    3. Follow user `HTTP_200_OK`.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
+
+    def post(self, request, user_id) -> Response:
+        user = request.user
+        user_to_follow = get_object_or_404(User, id=user_id)
+
+        if user == user_to_follow:
+            return Response({"msg": "You can not follow yourself"}, status.HTTP_400_BAD_REQUEST)
+
+        if user_to_follow.check_following(user.id):
+            return Response({"msg": "You have already followed this user"}, status.HTTP_400_BAD_REQUEST)
+
+        user_to_follow.follow(user)
+        return Response({"msg": "You have followed this user"}, status.HTTP_200_OK)
+
+
+@extend_schema(tags=["User Following"])
+class UserUnfollowAPIView(views.APIView):
+    """
+    Unfollow users. Only users who have followed can unfollow.
+    1. Check if user is following yourself. If yes, return an error message `HTTP_400_BAD_REQUEST`.
+    2. Check if user has already unfollowed. If yes, return an error message `HTTP_400_BAD_REQUEST`.
+    3. Unfollow user `HTTP_200_OK`.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
+
+    def post(self, request, user_id) -> Response:
+        user = request.user
+        user_to_unfollow = get_object_or_404(User, id=user_id)
+
+        if user == user_to_unfollow:
+            return Response({"msg": "You can not unfollow yourself"}, status.HTTP_400_BAD_REQUEST)
+
+        if not user_to_unfollow.check_following(user.id):
+            return Response({"msg": "You have not followed this user"}, status.HTTP_400_BAD_REQUEST)
+
+        user_to_unfollow.unfollow(user)
+        return Response({"msg": "You have unfollowed this user"}, status.HTTP_200_OK)

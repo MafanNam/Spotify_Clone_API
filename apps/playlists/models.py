@@ -40,9 +40,26 @@ class Playlist(TimeStampedModel):
         return self.tracks.all()
 
     class Meta:
-        verbose_name = _("playlist")
-        verbose_name_plural = _("playlists")
+        verbose_name = _("Playlist")
+        verbose_name_plural = _("Playlists")
         ordering = ["-created_at", "-updated_at"]
 
     def __str__(self):
         return self.title
+
+
+class FavoritePlaylist(TimeStampedModel):
+    """
+    Favorite playlist model.
+    """
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorite_playlists")
+    playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE, related_name="favorite_playlists")
+
+    class Meta:
+        verbose_name = _("Favorite playlist")
+        verbose_name_plural = _("Favorite playlists")
+        ordering = ["-created_at", "-updated_at"]
+
+    def __str__(self):
+        return f"{self.user} is favorite {self.playlist.title}"

@@ -1,7 +1,7 @@
 import os.path
 
 from django.http import FileResponse, Http404
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, views
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
@@ -12,6 +12,10 @@ from apps.core.permissions import ArtistRequiredPermission, IsPremiumUserPermiss
 
 
 class TrackListAPIView(generics.ListAPIView):
+    """
+    Track list. Public permission.
+    """
+
     permission_classes = [permissions.AllowAny]
     serializer_class = ShortTrackSerializer
 
@@ -19,7 +23,23 @@ class TrackListAPIView(generics.ListAPIView):
         return Track.objects.filter(is_private=False)
 
 
+class TrackLikedListAPIView(generics.ListAPIView):
+    """
+    Track liked list. Private permission.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ShortTrackSerializer
+
+    def get_queryset(self):
+        return Track.objects.filter(user_of_likes=self.request.user)
+
+
 class TrackDetailAPIView(generics.RetrieveAPIView):
+    """
+    Track detail. Public permission.
+    """
+
     permission_classes = [permissions.AllowAny]
     serializer_class = TrackSerializer
     lookup_field = "slug"
@@ -29,16 +49,34 @@ class TrackDetailAPIView(generics.RetrieveAPIView):
 
 
 class TrackRecentlyPlayedAPIView(generics.ListAPIView):
-    """List all recently played track"""
+    """
+    List all recently played track. Public view.
+    Filter last played 10 tracks by users or anonymous(by viewer IP).
+    """
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     serializer_class = ShortTrackSerializer
 
     def get_queryset(self):
-        return Track.objects.filter(private=False, plays__user=self.request.user).order_by("-plays__played_at")[:10]
+        viewer_ip = self.request.META.get("REMOTE_ADDR", None)
+
+        if self.request.user.is_authenticated:
+            return Track.objects.filter(is_private=False, plays__user=self.request.user).order_by("-plays__played_at")[
+                :10
+            ]
+
+        if viewer_ip:
+            return Track.objects.filter(is_private=False, plays__viewer_ip=viewer_ip).order_by("-plays__played_at")[:10]
+
+        return Track.objects.none()
 
 
 class TrackMyListCreateAPIView(generics.ListCreateAPIView):
+    """
+    List all my tracks.
+    Only for authenticated user(artist).
+    """
+
     permission_classes = [ArtistRequiredPermission]
 
     def get_serializer_class(self):
@@ -54,6 +92,10 @@ class TrackMyListCreateAPIView(generics.ListCreateAPIView):
 
 
 class TrackMyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Track detail. Only for authenticated user(artist).
+    """
+
     permission_classes = [ArtistRequiredPermission]
     serializer_class = TrackCreateSerializer
     lookup_field = "slug"
@@ -62,12 +104,12 @@ class TrackMyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         return Track.objects.get(slug=self.kwargs.get("slug"), artist=self.request.user.artist)
 
 
-class StreamingTrackAPIView(generics.RetrieveAPIView):
-    """Listen track"""
+class StreamingTrackAPIView(views.APIView):
+    """Listen track. Public permission."""
 
     serializer_class = None
     permission_classes = [permissions.AllowAny]
-    lookup_field = "slug"
+    http_method_names = ["get"]
 
     def get_object(self):
         return get_object_or_404(Track, slug=self.kwargs.get("slug"), is_private=False)
@@ -77,7 +119,7 @@ class StreamingTrackAPIView(generics.RetrieveAPIView):
         track.plays_count += 1
         track.save()
 
-    def retrieve(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         track = self.get_object()
         viewer_ip = request.META.get("REMOTE_ADDR", None)
 
@@ -95,24 +137,30 @@ class StreamingTrackAPIView(generics.RetrieveAPIView):
 
 
 class StreamingMyTrackAPIView(StreamingTrackAPIView):
+    """
+    Listen my track. Only for authenticated user(artist).
+    """
+
     permission_classes = [ArtistRequiredPermission]
+    http_method_names = ["get"]
 
     def get_object(self):
         return get_object_or_404(Track, slug=self.kwargs.get("slug"), artist=self.request.user.artist)
 
 
-class DownloadTrackAPIView(generics.RetrieveAPIView):
-    """Download track. Only for premium users"""
+class DownloadTrackAPIView(views.APIView):
+    """Download track. Only for premium user."""
 
     serializer_class = None
     permission_classes = [IsPremiumUserPermission]
+    http_method_names = ["get"]
 
     @staticmethod
     def set_download(track):
         track.downloads_count += 1
         track.save()
 
-    def retrieve(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         track = get_object_or_404(Track, slug=self.kwargs.get("slug"), is_private=False)
         if os.path.exists(track.file.path):
             self.set_download(track)
@@ -125,18 +173,21 @@ class DownloadTrackAPIView(generics.RetrieveAPIView):
             return Http404
 
 
-class TrackLikeAPIView(generics.UpdateAPIView):
-    """Like track. Only for premium users"""
+class TrackLikeAPIView(views.APIView):
+    """
+    Like track. Only for authenticated user.
+    - If user has not liked the track, add the like and increase the likes count and return status `HTTP_200_OK`.
+    - If user has already liked the track, return a message and status `HTTP_400_BAD_REQUEST`.
+    """
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = None
-    lookup_field = "slug"
-    http_method_names = ["patch"]
+    http_method_names = ["post"]
 
     def get_object(self):
         return get_object_or_404(Track, slug=self.kwargs.get("slug"), is_private=False)
 
-    def patch(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         track = self.get_object()
         if request.user not in track.user_of_likes.all():
             track.likes_count += 1
@@ -144,25 +195,28 @@ class TrackLikeAPIView(generics.UpdateAPIView):
             track.save()
             return Response({"likes_count": track.likes_count}, status.HTTP_200_OK)
         # If user has already liked the track, return a message
-        return Response({"detail": "You have already liked this track."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"msg": "You have already liked this track."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TrackUnlikeAPIView(generics.UpdateAPIView):
-    """Unlike track. Only for premium users"""
+class TrackUnlikeAPIView(views.APIView):
+    """
+    Unlike track. Only for authenticated user.
+    - If user has not liked the track, return a message and status `HTTP_400_BAD_REQUEST`.
+    - If user has liked the track, remove the like and decrease the likes count and return status `HTTP_200_OK`.
+    """
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = None
-    lookup_field = "slug"
-    http_method_names = ["patch"]
+    http_method_names = ["delete"]
 
     def get_object(self):
         return get_object_or_404(Track, slug=self.kwargs.get("slug"), is_private=False)
 
-    def patch(self, request, *args, **kwargs):
+    def delete(self, request, *args, **kwargs):
         track = self.get_object()
         if request.user in track.user_of_likes.all():
             track.user_of_likes.remove(request.user)
             track.likes_count -= 1
             track.save()
             return Response({"likes_count": track.likes_count}, status.HTTP_200_OK)
-        return Response({"detail": "You have not liked this track."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"msg": "You have not liked this track."}, status=status.HTTP_400_BAD_REQUEST)
