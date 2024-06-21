@@ -1,9 +1,11 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status, views
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
 
 from apps.analytics.models import PlaylistPlayed
 from apps.core.permissions import IsOwnerUserPermission
-from apps.playlists.api.serializers import PlaylistSerializer, ShortPlaylistSerializer
-from apps.playlists.models import Playlist
+from apps.playlists.api.serializers import FavoritePlaylistSerializer, PlaylistSerializer, ShortPlaylistSerializer
+from apps.playlists.models import FavoritePlaylist, Playlist
 
 
 class PlaylistListAPIView(generics.ListAPIView):
@@ -96,3 +98,45 @@ class MyPlaylistDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Playlist.objects.filter(user=self.request.user)
+
+
+class PlaylistFavoriteListAPIView(generics.ListAPIView):
+    """
+    Favorite Playlist List API View.
+    Private view, only for authenticated users and owner.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = FavoritePlaylistSerializer
+
+    def get_queryset(self):
+        return FavoritePlaylist.objects.filter(user=self.request.user)
+
+
+class PlaylistFavoriteCreateAPIView(views.APIView):
+    """
+    Favorite Playlist Create API View.
+    Private view, only for authenticated users and owner.
+    - `POST`: Add playlist to favorites.
+    1. If playlist already in favorites, return `HTTP_400_BAD_REQUEST.
+    2. If playlist not in favorites, create new favorite and return `HTTP_201_CREATED`.
+    - `DELETE`: Remove playlist from favorites.
+    1. If playlist not in favorites, return `HTTP_404_NOT_FOUND`.
+    2. If playlist in favorites, delete favorite and return `HTTP_204_NO_CONTENT`.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = None
+
+    def post(self, request, *args, **kwargs):
+        playlist = get_object_or_404(Playlist, slug=kwargs.get("slug"), is_private=False)
+        favorite_playlist, created = FavoritePlaylist.objects.get_or_create(user=request.user, playlist=playlist)
+        if not created:
+            return Response({"msg": "Playlist already added to favorites"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"msg": "Playlist added to favorites"}, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, *args, **kwargs):
+        playlist = get_object_or_404(Playlist, slug=kwargs.get("slug"), is_private=False)
+        favorite_playlist = get_object_or_404(FavoritePlaylist, user=request.user, playlist=playlist)
+        favorite_playlist.delete()
+        return Response({"msg": "Playlist removed from favorites"}, status=status.HTTP_204_NO_CONTENT)

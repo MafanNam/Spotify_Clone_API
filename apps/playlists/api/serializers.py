@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from apps.audio.api.serializers import ShortTrackSerializer
 from apps.other.api.serializers import GenreSerializer
-from apps.playlists.models import Playlist
+from apps.playlists.models import FavoritePlaylist, Playlist
 from apps.users.api.serializers import ShortCustomUserSerializer
 
 
@@ -40,3 +40,12 @@ class ShortPlaylistSerializer(PlaylistSerializer):
             "genre",
             "is_private",
         ]
+
+
+class FavoritePlaylistSerializer(serializers.ModelSerializer):
+    user = ShortCustomUserSerializer(read_only=True, many=False)
+    playlist = ShortPlaylistSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = FavoritePlaylist
+        fields = ["id", "user", "playlist", "created_at", "updated_at"]

@@ -23,6 +23,18 @@ class TrackListAPIView(generics.ListAPIView):
         return Track.objects.filter(is_private=False)
 
 
+class TrackLikedListAPIView(generics.ListAPIView):
+    """
+    Track liked list. Private permission.
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ShortTrackSerializer
+
+    def get_queryset(self):
+        return Track.objects.filter(user_of_likes=self.request.user)
+
+
 class TrackDetailAPIView(generics.RetrieveAPIView):
     """
     Track detail. Public permission.
