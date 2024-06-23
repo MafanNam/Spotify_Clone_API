@@ -10,6 +10,7 @@ class PlaylistSerializer(serializers.ModelSerializer):
     user = ShortCustomUserSerializer(read_only=True, many=False)
     genre = GenreSerializer(read_only=True, many=False)
     tracks = ShortTrackSerializer(many=True, read_only=True)
+    duration = serializers.DurationField(source="total_duration", read_only=True)
 
     class Meta:
         model = Playlist
@@ -23,6 +24,7 @@ class PlaylistSerializer(serializers.ModelSerializer):
             "genre",
             "release_date",
             "is_private",
+            "duration",
             "created_at",
             "updated_at",
         ]

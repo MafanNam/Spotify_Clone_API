@@ -1,6 +1,7 @@
 from autoslug import AutoSlugField
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import Sum
 from django.utils.translation import gettext_lazy as _
 
 from apps.audio.models import Track
@@ -38,6 +39,11 @@ class Playlist(TimeStampedModel):
     @property
     def get_tracks(self):
         return self.tracks.all()
+
+    @property
+    def total_duration(self):
+        total_duration = self.tracks.aggregate(Sum("duration"))["duration__sum"]
+        return total_duration
 
     class Meta:
         verbose_name = _("Playlist")

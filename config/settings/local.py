@@ -1,3 +1,5 @@
+import sys
+
 from .base import *  # noqa: F401
 from .base import env
 
@@ -7,8 +9,9 @@ SECRET_KEY = env("SECRET_KEY", default="django-insecure-a77ec^w-=8mz71we3on8ld&^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG", default=True)
 
+INTERNAL_IPS = env.list("INTERNAL_IPS", default="127.0.0.1")
+
 INSTALLED_APPS += [
-    "debug_toolbar",
     "silk",
 ]
 
@@ -18,11 +21,21 @@ MIDDLEWARE += [
     # "apps.users.middleware.JWTFromCookieMiddleware",
 ]
 
+TESTING = "test" in sys.argv
+if not TESTING:
+    INSTALLED_APPS += [
+        "debug_toolbar",
+    ]
+    MIDDLEWARE = [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+        *MIDDLEWARE,
+    ]
+
 MIDDLEWARE = [
     "silk.middleware.SilkyMiddleware",
     "django.middleware.gzip.GZipMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
-] + MIDDLEWARE
+    *MIDDLEWARE,
+]
 
 # EMAIL
 EMAIL_BACKEND = "djcelery_email.backends.CeleryEmailBackend"
