@@ -1,7 +1,8 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status, views
+from rest_framework.response import Response
 
-from apps.artists.models import Artist, License
-from apps.core.permissions import ArtistRequiredPermission
+from apps.artists.models import Artist, ArtistVerificationRequest, License
+from apps.core.permissions import ArtistRequiredPermission, IsPremiumUserPermission
 
 from .serializers import ArtistSerializer, LicenseSerializer
 
@@ -55,13 +56,24 @@ class ArtistDetailMeAPIView(generics.RetrieveUpdateAPIView):
 #     """
 #
 #     serializer_class = ArtistSerializer
-#     permission_classes = [ArtistRequiredPermission]
+#     permission_classes = [ArtistRequiredPermission, IsPremiumUserPermission]
 #
 #     def get_object(self):
 #         return self.request.user.artist
-#
-#     def perform_update(self, serializer):
-#         serializer.save(is_verify=True)
+
+
+class ArtistVerifyMeAPIView(views.APIView):
+    """
+    Artist Verify API View. Only for artist with premium.
+    """
+
+    permission_classes = [ArtistRequiredPermission, IsPremiumUserPermission]
+    serializer_class = None
+
+    def post(self, request):
+        artist = request.user.artist
+        ArtistVerificationRequest.objects.update_or_create(artist=artist, defaults={"is_processed": False})
+        return Response({"msg": "Verification email will be sent in 24 hours."}, status=status.HTTP_200_OK)
 
 
 class LicenseListCreateAPIView(generics.ListCreateAPIView):

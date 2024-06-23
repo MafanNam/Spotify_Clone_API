@@ -53,6 +53,24 @@ class Artist(TimeStampedModel):
         return f"{self.first_name} {self.last_name}"
 
 
+class ArtistVerificationRequest(TimeStampedModel):
+    """
+    Artist verification request model.
+    """
+
+    artist = models.OneToOneField(Artist, on_delete=models.CASCADE, related_name="verification_requests")
+    is_processed = models.BooleanField(_("is processed"), default=False)
+
+    class Meta:
+        verbose_name = _("Artist verification request")
+        verbose_name_plural = _("Artist verification requests")
+        ordering = ["-created_at", "-updated_at"]
+
+    def __str__(self):
+        """String representation of the artist verification request."""
+        return self.artist.display_name
+
+
 class License(TimeStampedModel):
     """
     License model.
