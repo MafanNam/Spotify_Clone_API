@@ -1,4 +1,6 @@
-from .base import *  # noqa
+import sys
+
+from .base import *  # noqa: F401
 from .base import env
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -7,9 +9,11 @@ SECRET_KEY = env("SECRET_KEY", default="django-insecure-a77ec^w-=8mz71we3on8ld&^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG", default=True)
 
-# INSTALLED_APPS += [
-#     "debug_toolbar",
-# ]
+INTERNAL_IPS = env.list("INTERNAL_IPS", default="127.0.0.1")
+
+INSTALLED_APPS += [
+    "silk",
+]
 
 MIDDLEWARE += [
     # TODO: Delete JWTFromCookieMiddleware
@@ -17,19 +21,30 @@ MIDDLEWARE += [
     # "apps.users.middleware.JWTFromCookieMiddleware",
 ]
 
+TESTING = "test" in sys.argv
+if not TESTING:
+    INSTALLED_APPS += [
+        "debug_toolbar",
+    ]
+    MIDDLEWARE = [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+        *MIDDLEWARE,
+    ]
+
 MIDDLEWARE = [
+    "silk.middleware.SilkyMiddleware",
     "django.middleware.gzip.GZipMiddleware",
-    # "debug_toolbar.middleware.DebugToolbarMiddleware",
-] + MIDDLEWARE
+    *MIDDLEWARE,
+]
 
 # EMAIL
-# EMAIL_BACKEND = "djcelery_email.backends.CeleryEmailBackend"
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "djcelery_email.backends.CeleryEmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = "Spotify Clone <spotify_clone@gmail.com>"
 
 # DEBUG TOOLBAR

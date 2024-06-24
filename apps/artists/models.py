@@ -42,7 +42,7 @@ class Artist(TimeStampedModel):
     def save(self, *args, **kwargs):
         if self.display_name == "" or self.display_name is None:
             self.display_name = f"{self.first_name} {self.last_name}"
-        super(Artist, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         """String representation of the artist."""
@@ -51,6 +51,24 @@ class Artist(TimeStampedModel):
     @property
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+
+class ArtistVerificationRequest(TimeStampedModel):
+    """
+    Artist verification request model.
+    """
+
+    artist = models.OneToOneField(Artist, on_delete=models.CASCADE, related_name="verification_requests")
+    is_processed = models.BooleanField(_("is processed"), default=False)
+
+    class Meta:
+        verbose_name = _("Artist verification request")
+        verbose_name_plural = _("Artist verification requests")
+        ordering = ["-created_at", "-updated_at"]
+
+    def __str__(self):
+        """String representation of the artist verification request."""
+        return self.artist.display_name
 
 
 class License(TimeStampedModel):

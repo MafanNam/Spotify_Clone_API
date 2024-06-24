@@ -97,7 +97,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         email_username, _ = self.email.split("@", 1)
         if self.display_name == "" or self.display_name is None:
             self.display_name = email_username
-        super(User, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     @property
     def get_profile(self):
