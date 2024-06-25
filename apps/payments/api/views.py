@@ -1,6 +1,9 @@
+from django_filters import rest_framework as dj_filters
 from rest_framework import generics, permissions
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import get_object_or_404
 
+from apps.core import filters, pagination
 from apps.payments.api.serializers import PaymentCreateSerializer, PaymentListSerializer, TaxSerializer
 from apps.payments.models import Payment, Tax
 
@@ -11,6 +14,11 @@ class PaymentListCreateAPIView(generics.ListCreateAPIView):
     """
 
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = pagination.StandardResultsSetPagination
+    filter_backends = [dj_filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = filters.PaymentFilter
+    search_fields = ["payment_id", "tax__name"]
+    ordering_fields = ["created_at"]
 
     def get_queryset(self):
         return Payment.objects.select_related("user", "tax").filter(user=self.request.user)

@@ -35,7 +35,7 @@ def send_verification_emails(self):
         artist = request.artist
         send_mail(
             f"Verify your profile {artist.display_name}",
-            f"Please verify your profile by clicking the following link.",
+            "Please verify your profile by clicking the following link.",
             settings.EMAIL_HOST_USER,
             [artist.user.email],
             fail_silently=False,

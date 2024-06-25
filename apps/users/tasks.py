@@ -22,8 +22,8 @@ def send_spam_emails(self):
             return "No spam users found"
 
         # Set up email details
-        subject = f"Test spam mass email with celery"
-        message = f"Testing"
+        subject = "Test spam mass email with celery"
+        message = "Testing"
         from_email = settings.EMAIL_HOST_USER
 
         # Create a list of email messages

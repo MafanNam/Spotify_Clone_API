@@ -1,13 +1,16 @@
 import os.path
 
 from django.http import FileResponse, Http404
+from django_filters import rest_framework as dj_filters
 from rest_framework import generics, permissions, status, views
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from apps.analytics.models import TrackPlayed
 from apps.audio.api.serializers import ShortTrackSerializer, TrackCreateSerializer, TrackSerializer
 from apps.audio.models import Track
+from apps.core import filters, pagination
 from apps.core.permissions import ArtistRequiredPermission, IsPremiumUserPermission
 
 
@@ -18,6 +21,11 @@ class TrackListAPIView(generics.ListAPIView):
 
     permission_classes = [permissions.AllowAny]
     serializer_class = ShortTrackSerializer
+    pagination_class = pagination.StandardResultsSetPagination
+    filter_backends = [dj_filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = filters.TrackFilter
+    search_fields = ["title", "artist__display_name", "genre__name", "album__title"]
+    ordering_fields = ["release_date", "created_at", "plays_count", "downloads_count", "likes_count"]
 
     def get_queryset(self):
         return Track.objects.select_related("artist", "license", "genre", "album").filter(is_private=False)
@@ -30,6 +38,11 @@ class TrackLikedListAPIView(generics.ListAPIView):
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ShortTrackSerializer
+    pagination_class = pagination.LargeResultsSetPagination
+    filter_backends = [dj_filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = filters.TrackFilter
+    search_fields = ["title", "artist__display_name", "genre__name", "album__title"]
+    ordering_fields = ["release_date", "created_at", "plays_count", "downloads_count", "likes_count"]
 
     def get_queryset(self):
         return Track.objects.select_related("artist", "license", "genre", "album").filter(
@@ -58,6 +71,11 @@ class TrackRecentlyPlayedAPIView(generics.ListAPIView):
 
     permission_classes = [permissions.AllowAny]
     serializer_class = ShortTrackSerializer
+    pagination_class = pagination.StandardResultsSetPagination
+    filter_backends = [dj_filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = filters.TrackFilter
+    search_fields = ["title", "artist__display_name", "genre__name", "album__title"]
+    ordering_fields = ["release_date", "created_at", "plays_count", "downloads_count", "likes_count"]
 
     def get_queryset(self):
         viewer_ip = self.request.META.get("REMOTE_ADDR", None)
@@ -86,6 +104,11 @@ class TrackMyListCreateAPIView(generics.ListCreateAPIView):
     """
 
     permission_classes = [ArtistRequiredPermission]
+    pagination_class = pagination.StandardResultsSetPagination
+    filter_backends = [dj_filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = filters.MyTrackFilter
+    search_fields = ["title", "genre__name", "album__title"]
+    ordering_fields = ["release_date", "created_at", "plays_count", "downloads_count", "likes_count"]
 
     def get_serializer_class(self):
         if self.request.method == "POST":

@@ -1,10 +1,11 @@
-from django.db.models import Prefetch
+from django_filters import rest_framework as dj_filters
 from rest_framework import generics, permissions, status, views
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from apps.analytics.models import PlaylistPlayed
-from apps.audio.models import Track
+from apps.core import filters, pagination
 from apps.core.permissions import IsOwnerUserPermission
 from apps.playlists.api.serializers import FavoritePlaylistSerializer, PlaylistSerializer, ShortPlaylistSerializer
 from apps.playlists.models import FavoritePlaylist, Playlist
@@ -17,6 +18,11 @@ class PlaylistListAPIView(generics.ListAPIView):
 
     permission_classes = [permissions.AllowAny]
     serializer_class = ShortPlaylistSerializer
+    pagination_class = pagination.StandardResultsSetPagination
+    filter_backends = [dj_filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = filters.PlaylistFilter
+    search_fields = ["user__display_name", "title", "tracks__title", "genre__name"]
+    ordering_fields = ["release_date", "created_at"]
 
     def get_queryset(self):
         return Playlist.objects.select_related("user", "genre").prefetch_related("tracks").filter(is_private=False)
@@ -55,6 +61,11 @@ class PlaylistRecentlyPlayedAPIView(generics.ListAPIView):
 
     permission_classes = [permissions.AllowAny]
     serializer_class = ShortPlaylistSerializer
+    pagination_class = pagination.StandardResultsSetPagination
+    filter_backends = [dj_filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = filters.PlaylistFilter
+    search_fields = ["user__display_name", "title", "tracks__title", "genre__name"]
+    ordering_fields = ["release_date", "created_at"]
 
     def get_queryset(self):
         viewer_ip = self.request.META.get("REMOTE_ADDR", None)
@@ -86,6 +97,11 @@ class MyPlaylistListCreateAPIView(generics.ListCreateAPIView):
 
     permission_classes = [IsOwnerUserPermission]
     serializer_class = PlaylistSerializer
+    pagination_class = pagination.StandardResultsSetPagination
+    filter_backends = [dj_filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = filters.MyPlaylistFilter
+    search_fields = ["user__display_name", "title", "tracks__title", "genre__name"]
+    ordering_fields = ["release_date", "created_at"]
 
     def get_queryset(self):
         return (
@@ -124,6 +140,11 @@ class PlaylistFavoriteListAPIView(generics.ListAPIView):
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = FavoritePlaylistSerializer
+    pagination_class = pagination.StandardResultsSetPagination
+    filter_backends = [dj_filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = filters.FavoritePlaylistFilter
+    search_fields = ["user__display_name", "playlist__title", "playlist__tracks__title", "playlist__genre__name"]
+    ordering_fields = ["playlist__release_date", "playlist__created_at"]
 
     def get_queryset(self):
         return FavoritePlaylist.objects.select_related("user", "playlist", "playlist__genre", "playlist__user").filter(

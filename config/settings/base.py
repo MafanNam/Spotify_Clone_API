@@ -52,6 +52,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.http.ConditionalGetMiddleware",
     "social_django.middleware.SocialAuthExceptionMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -190,8 +191,8 @@ SPECTACULAR_SETTINGS = {
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         # TODO: Uncomment this line to enable JWT authentication by HttpOnly Cookie
-        # "apps.users.authentication.CustomJWTAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
+        "apps.users.authentication.CustomJWTAuthentication",
+        # "rest_framework.authentication.BasicAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
@@ -268,7 +269,6 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     "openid",
 ]
 SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ["first_name", "last_name"]
-
 
 # CACHE
 CACHES = {

@@ -1,7 +1,10 @@
+from django_filters import rest_framework as dj_filters
 from rest_framework import generics, permissions, status, views
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
 
 from apps.artists.models import Artist, ArtistVerificationRequest, License
+from apps.core import filters, pagination
 from apps.core.permissions import ArtistRequiredPermission, IsPremiumUserPermission
 
 from .serializers import ArtistSerializer, LicenseSerializer
@@ -15,6 +18,11 @@ class ArtistListCreateAPIView(generics.ListCreateAPIView):
 
     queryset = Artist.objects.select_related("user").all()
     serializer_class = ArtistSerializer
+    pagination_class = pagination.StandardResultsSetPagination
+    filter_backends = [dj_filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = filters.ArtistFilter
+    search_fields = ["display_name", "first_name", "last_name"]
+    ordering_fields = ["created_at"]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
