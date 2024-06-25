@@ -20,7 +20,7 @@ class TrackListAPIView(generics.ListAPIView):
     serializer_class = ShortTrackSerializer
 
     def get_queryset(self):
-        return Track.objects.filter(is_private=False)
+        return Track.objects.select_related("artist", "license", "genre", "album").filter(is_private=False)
 
 
 class TrackLikedListAPIView(generics.ListAPIView):
@@ -32,7 +32,9 @@ class TrackLikedListAPIView(generics.ListAPIView):
     serializer_class = ShortTrackSerializer
 
     def get_queryset(self):
-        return Track.objects.filter(user_of_likes=self.request.user)
+        return Track.objects.select_related("artist", "license", "genre", "album").filter(
+            user_of_likes=self.request.user
+        )
 
 
 class TrackDetailAPIView(generics.RetrieveAPIView):
@@ -45,7 +47,7 @@ class TrackDetailAPIView(generics.RetrieveAPIView):
     lookup_field = "slug"
 
     def get_queryset(self):
-        return Track.objects.filter(is_private=False)
+        return Track.objects.select_related("artist", "license", "genre", "album").filter(is_private=False)
 
 
 class TrackRecentlyPlayedAPIView(generics.ListAPIView):
@@ -61,12 +63,18 @@ class TrackRecentlyPlayedAPIView(generics.ListAPIView):
         viewer_ip = self.request.META.get("REMOTE_ADDR", None)
 
         if self.request.user.is_authenticated:
-            return Track.objects.filter(is_private=False, plays__user=self.request.user).order_by("-plays__played_at")[
-                :10
-            ]
+            return (
+                Track.objects.select_related("artist", "license", "genre", "album")
+                .filter(is_private=False, plays__user=self.request.user)
+                .order_by("-plays__played_at")[:10]
+            )
 
         if viewer_ip:
-            return Track.objects.filter(is_private=False, plays__viewer_ip=viewer_ip).order_by("-plays__played_at")[:10]
+            return (
+                Track.objects.select_related("artist", "license", "genre", "album")
+                .filter(is_private=False, plays__viewer_ip=viewer_ip)
+                .order_by("-plays__played_at")[:10]
+            )
 
         return Track.objects.none()
 
@@ -85,7 +93,11 @@ class TrackMyListCreateAPIView(generics.ListCreateAPIView):
         return TrackSerializer
 
     def get_queryset(self):
-        return Track.objects.filter(artist=self.request.user.artist)
+        return (
+            Track.objects.select_related("artist", "genre", "license", "album")
+            .prefetch_related("license__artist", "user_of_likes")
+            .filter(artist=self.request.user.artist)
+        )
 
     def perform_create(self, serializer):
         serializer.save(artist=self.request.user.artist)
@@ -101,7 +113,11 @@ class TrackMyDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = "slug"
 
     def get_object(self):
-        return Track.objects.get(slug=self.kwargs.get("slug"), artist=self.request.user.artist)
+        return (
+            Track.objects.select_related("artist")
+            .prefetch_related("user_of_likes")
+            .get(slug=self.kwargs.get("slug"), artist=self.request.user.artist)
+        )
 
 
 class StreamingTrackAPIView(views.APIView):

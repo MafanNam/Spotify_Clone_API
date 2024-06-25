@@ -10,7 +10,7 @@ class SubscriptionsAPIView(generics.ListCreateAPIView):
     Only admin can create subscription.
     """
 
-    queryset = SubscriptionPlan.objects.all()
+    queryset = SubscriptionPlan.objects.prefetch_related("feature").all()
     serializer_class = SubscriptionPlanSerializer
 
     def get_permissions(self):
@@ -27,7 +27,7 @@ class SubscriptionPlanDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     Only admin can update and delete subscription.
     """
 
-    queryset = SubscriptionPlan.objects.all()
+    queryset = SubscriptionPlan.objects.prefetch_related("feature").all()
     serializer_class = SubscriptionPlanSerializer
 
     def get_permissions(self):

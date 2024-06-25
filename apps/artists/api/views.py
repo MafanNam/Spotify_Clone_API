@@ -13,7 +13,7 @@ class ArtistListCreateAPIView(generics.ListCreateAPIView):
     Only one artist can be created for each user.
     """
 
-    queryset = Artist.objects.all()
+    queryset = Artist.objects.select_related("user").all()
     serializer_class = ArtistSerializer
 
     def perform_create(self, serializer):
@@ -32,7 +32,7 @@ class ArtistDetailAPIView(generics.RetrieveAPIView):
     Artist Detail API View. Public.
     """
 
-    queryset = Artist.objects.all()
+    queryset = Artist.objects.select_related("user").all()
     serializer_class = ArtistSerializer
     permission_classes = [permissions.AllowAny]
     lookup_field = "slug"
@@ -48,18 +48,6 @@ class ArtistDetailMeAPIView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user.artist
-
-
-# class ArtistVerifyMeAPIView(generics.UpdateAPIView):
-#     """
-#     Artist Verify API View. Only for owner artist.
-#     """
-#
-#     serializer_class = ArtistSerializer
-#     permission_classes = [ArtistRequiredPermission, IsPremiumUserPermission]
-#
-#     def get_object(self):
-#         return self.request.user.artist
 
 
 class ArtistVerifyMeAPIView(views.APIView):
@@ -88,7 +76,7 @@ class LicenseListCreateAPIView(generics.ListCreateAPIView):
         serializer.save(artist=self.request.user.artist)
 
     def get_queryset(self):
-        return License.objects.filter(artist=self.request.user.artist)
+        return License.objects.select_related("artist").filter(artist=self.request.user.artist)
 
 
 class LicenseRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -100,4 +88,4 @@ class LicenseRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
     permission_classes = [ArtistRequiredPermission]
 
     def get_queryset(self):
-        return License.objects.filter(artist=self.request.user.artist)
+        return License.objects.select_related("artist").filter(artist=self.request.user.artist)

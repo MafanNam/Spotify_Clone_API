@@ -13,7 +13,7 @@ class PaymentListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Payment.objects.filter(user=self.request.user)
+        return Payment.objects.select_related("user", "tax").filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

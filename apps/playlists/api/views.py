@@ -1,8 +1,10 @@
+from django.db.models import Prefetch
 from rest_framework import generics, permissions, status, views
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from apps.analytics.models import PlaylistPlayed
+from apps.audio.models import Track
 from apps.core.permissions import IsOwnerUserPermission
 from apps.playlists.api.serializers import FavoritePlaylistSerializer, PlaylistSerializer, ShortPlaylistSerializer
 from apps.playlists.models import FavoritePlaylist, Playlist
@@ -17,7 +19,7 @@ class PlaylistListAPIView(generics.ListAPIView):
     serializer_class = ShortPlaylistSerializer
 
     def get_queryset(self):
-        return Playlist.objects.filter(is_private=False)
+        return Playlist.objects.select_related("user", "genre").prefetch_related("tracks").filter(is_private=False)
 
 
 class PlaylistDetailAPIView(generics.RetrieveAPIView):
@@ -30,7 +32,7 @@ class PlaylistDetailAPIView(generics.RetrieveAPIView):
     lookup_field = "slug"
 
     def get_queryset(self):
-        return Playlist.objects.filter(is_private=False)
+        return Playlist.objects.select_related("user", "genre").filter(is_private=False)
 
     def retrieve(self, request, *args, **kwargs):
         playlist = self.get_object()
@@ -58,14 +60,20 @@ class PlaylistRecentlyPlayedAPIView(generics.ListAPIView):
         viewer_ip = self.request.META.get("REMOTE_ADDR", None)
 
         if self.request.user.is_authenticated:
-            return Playlist.objects.filter(is_private=False, playlist_plays__user=self.request.user).order_by(
-                "-playlist_plays__played_at"
-            )[:10]
+            return (
+                Playlist.objects.select_related("user", "genre")
+                .prefetch_related("tracks")
+                .filter(is_private=False, playlist_plays__user=self.request.user)
+                .order_by("-playlist_plays__played_at")[:10]
+            )
 
         if viewer_ip:
-            return Playlist.objects.filter(is_private=False, playlist_plays__viewer_ip=viewer_ip).order_by(
-                "-playlist_plays__played_at"
-            )[:10]
+            return (
+                Playlist.objects.select_related("user", "genre")
+                .prefetch_related("tracks")
+                .filter(is_private=False, playlist_plays__viewer_ip=viewer_ip)
+                .order_by("-playlist_plays__played_at")[:10]
+            )
 
         return Playlist.objects.none()
 
@@ -80,7 +88,11 @@ class MyPlaylistListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = PlaylistSerializer
 
     def get_queryset(self):
-        return Playlist.objects.filter(user=self.request.user)
+        return (
+            Playlist.objects.select_related("user", "genre")
+            .prefetch_related("tracks", "tracks__artist", "tracks__album", "tracks__genre")
+            .filter(user=self.request.user)
+        )
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -97,7 +109,11 @@ class MyPlaylistDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = "slug"
 
     def get_queryset(self):
-        return Playlist.objects.filter(user=self.request.user)
+        return (
+            Playlist.objects.select_related("user", "genre")
+            .prefetch_related("tracks", "tracks__artist", "tracks__album", "tracks__genre")
+            .filter(user=self.request.user)
+        )
 
 
 class PlaylistFavoriteListAPIView(generics.ListAPIView):
@@ -110,7 +126,9 @@ class PlaylistFavoriteListAPIView(generics.ListAPIView):
     serializer_class = FavoritePlaylistSerializer
 
     def get_queryset(self):
-        return FavoritePlaylist.objects.filter(user=self.request.user)
+        return FavoritePlaylist.objects.select_related("user", "playlist", "playlist__genre", "playlist__user").filter(
+            user=self.request.user
+        )
 
 
 class PlaylistFavoriteCreateAPIView(views.APIView):

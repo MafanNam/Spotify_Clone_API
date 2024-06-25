@@ -7,6 +7,7 @@ from apps.artists.models import Artist, ArtistVerificationRequest, License
 class ArtistAdmin(admin.ModelAdmin):
     list_display = ["id", "user", "display_name", "image", "is_verify"]
     list_display_links = ["id", "user", "display_name"]
+    list_editable = ["is_verify"]
     list_filter = ["is_verify"]
 
 

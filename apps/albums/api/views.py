@@ -14,7 +14,7 @@ class AlbumListCreateAPIView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
-        return Album.objects.filter(is_private=False)
+        return Album.objects.select_related("artist").filter(is_private=False)
 
 
 class AlbumDetailAPIView(generics.RetrieveAPIView):
@@ -27,7 +27,7 @@ class AlbumDetailAPIView(generics.RetrieveAPIView):
     lookup_field = "slug"
 
     def get_queryset(self):
-        return Album.objects.filter(is_private=False)
+        return Album.objects.select_related("artist").filter(is_private=False)
 
 
 class MyAlbumListCreateAPIView(generics.ListCreateAPIView):
@@ -40,7 +40,7 @@ class MyAlbumListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [ArtistRequiredPermission]
 
     def get_queryset(self):
-        return Album.objects.filter(artist=self.request.user.artist)
+        return Album.objects.select_related("artist").filter(artist=self.request.user.artist)
 
     def perform_create(self, serializer):
         serializer.save(artist=self.request.user.artist)
@@ -57,4 +57,4 @@ class MyAlbumDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = "slug"
 
     def get_queryset(self):
-        return Album.objects.filter(artist=self.request.user.artist)
+        return Album.objects.select_related("artist").filter(artist=self.request.user.artist)

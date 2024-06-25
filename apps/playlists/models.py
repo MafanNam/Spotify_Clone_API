@@ -2,6 +2,7 @@ from autoslug import AutoSlugField
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Sum
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.audio.models import Track
@@ -29,7 +30,7 @@ class Playlist(TimeStampedModel):
         blank=True,
         default="default/track.jpg",
     )
-    release_date = models.DateField(_("release date"), blank=True, null=True)
+    release_date = models.DateField(_("release date"), blank=True, null=True, default=timezone.now)
     is_private = models.BooleanField(_("is_private"), default=False)
 
     @property
@@ -42,7 +43,7 @@ class Playlist(TimeStampedModel):
 
     @property
     def total_duration(self):
-        total_duration = self.tracks.aggregate(Sum("duration"))["duration__sum"]
+        total_duration = self.tracks.aggregate(total_duration=Sum("duration"))["total_duration"]
         return total_duration
 
     class Meta:
