@@ -65,7 +65,7 @@ DEBUG_TOOLBAR_PANELS = [
     "debug_toolbar.panels.templates.TemplatesPanel",
     "debug_toolbar.panels.cache.CachePanel",
     "debug_toolbar.panels.signals.SignalsPanel",
-    # "cachalot.panels.CachalotPanel",
+    "cachalot.panels.CachalotPanel",
 ]
 
 DEBUG_TOOLBAR_CONFIG = {

@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "djcelery_email",
     "djoser",
     "social_django",
+    "cachalot",
     "corsheaders",
     "drf_spectacular",
     "colorfield",
@@ -271,18 +272,18 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
 SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ["first_name", "last_name"]
 
 # CACHE
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
-    }
-}
-
 # CACHES = {
 #     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": env("REDIS_CACHE_LOCATION", default="redis://localhost:6379/1"),
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-#         },
+#         "BACKEND": "django.core.cache.backends.dummy.DummyCache",
 #     }
 # }
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": env("REDIS_CACHE_LOCATION", default="redis://localhost:6379/1"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
