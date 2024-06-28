@@ -1,10 +1,10 @@
 import logging
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.utils import timezone
-from datetime import timedelta
 
 from apps.artists.models import ArtistVerificationRequest
 from config import celery_app as app
@@ -12,6 +12,7 @@ from config import celery_app as app
 User = get_user_model()
 
 logger = logging.getLogger(__name__)
+
 
 @app.task(bind=True)
 def send_verification_emails(self):
@@ -34,7 +35,7 @@ def send_verification_emails(self):
         artist = request.artist
         send_mail(
             f"Verify your profile {artist.display_name}",
-            f"Please verify your profile by clicking the following link.",
+            "Please verify your profile by clicking the following link.",
             settings.EMAIL_HOST_USER,
             [artist.user.email],
             fail_silently=False,

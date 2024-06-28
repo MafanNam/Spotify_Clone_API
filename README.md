@@ -1,17 +1,20 @@
 # Spotify_Clone_API
 
-This is the repository for the Spotify_Clone_API project, which is a clone of the Spotify web service. This API implements
+This is the repository for the Spotify_Clone_API project, which is a clone of the Spotify web service. This API
+implements
 a basic set of functionalities allowing users to interact with the platform.
 
+![Spotify title]()
 
 ### Diagram DB
+
+![Spotify diagram DB]()
 
 ## Description
 
 Spotify_Clone_API is developed using Django, one of the most popular frameworks for building web applications in Python.
 This API provides features such as user registration, advertisement creation, user profile management, and other core
 functionalities.
-
 
 ## Requirements
 
@@ -36,33 +39,129 @@ $ git clone https://github.com/MafanNam/Spotify_Clone_API.git
 $ cd Spotify_Clone_API
 ```
 
-3. Install dependencies:
+3. Create/Activate environment:
+
+```bash
+$ pip install virtualenv
+$ python -m virtualenv venv
+$ .\venv\Scripts\activate
+$ # or linux
+$ source venv/bin/activate
+```
+
+4. Install dependencies:
 
 ```bash
 $ pip install -r requirements/local.txt
 ```
 
-4. Apply migrations to create the database:
+5. Apply migrations to create the database:
 
 ```bash
 $ python manage.py migrate
 ```
 
-5. Run the server:
+6. Load example data `NOT COMPLETE`
+
+```bash
+$ python -Xutf8 ./manage.py loaddata data/mydata.json
+```
+
+7. Run the server:
 
 ```bash
 $ python manage.py runserver
 ```
 
-You can now access the API in your browser at http://127.0.0.1:8000/.
+#### About fixtures(mydata.json)
 
-## Docker in development
+All user email in [data/mydata.json](mydata.json) and `password=Pass12345`
 
-Not completed
+for admin user `email=admin@gmail.com` and `password=1`
+
+### If you want the api to send messages to mail
+
+Then you MUST create and config `django.env` optional `django.docker.env`.
+
+For example I create `django.example.env` and `django.docker.example.env`
+
+All these files are in [.envs/.local/](.envs/.local/)
+
+You can now access the API in your browser at http://localhost:8000/.
+
+## Getting Started with Docker
+
+Commands can be run through a makefile or written manually.
+
+You can access the API in your browser at http://localhost:8080/. Flower http://localhost:5555/
+
+### To build and raise a container, you just need to run it:
+
+You cannot use makefile
+
+```bash
+$ docker compose -f local.yml up --build -d --remove-orphans
+$ # or
+$ docker compose -f local.yml up --build
+```
+
+You can use makefile
+
+```bash
+$ make build
+$ # or
+$ make build-log
+```
+
+### Basic commands:
+
+```bash
+$ make buld-log
+
+$ make up
+
+$ make down
+```
+
+## Run test
+
+For testing and generate coverage
+
+![cov tests]()
+
+#### makefile
+
+```bash
+$ make cov
+$ make cov-gen
+```
+
+`Docker`
+
+```bash
+$ make cov-docker
+$ make cov-gen-docker
+```
+
+#### no makefile
+
+```bash
+$ coverage run --source='.' --omit='*/migrations/*.py,*/asgi.py,*/wsgi.py,*/manage.py' manage.py test
+$ coverage html
+```
+
+`Docker`
+
+```bash
+$ docker compose -f local.yml run --rm server coverage run --source='.' --omit='*/migrations/*.py,*/asgi.py,*/wsgi.py,*/manage.py' manage.py test
+$ docker compose -f local.yml run --rm server coverage html
+```
 
 ## API Documentation
 
 The API documentation is not available [localhost:8080](http://localhost:8080).
+
+![Spotify endpoints]()
 
 ## Author
 

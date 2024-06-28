@@ -1,5 +1,7 @@
 from rest_framework import generics, permissions
+from rest_framework.filters import OrderingFilter, SearchFilter
 
+from apps.core import pagination
 from apps.other.api.serializers import GenreSerializer
 from apps.other.models import Genre
 
@@ -14,6 +16,10 @@ class GenreListAPIView(generics.ListCreateAPIView):
 
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    pagination_class = pagination.MaxResultsSetPagination
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ["name"]
+    ordering_fields = ["created_at"]
 
     def get_permissions(self):
         if self.request.method == "GET":

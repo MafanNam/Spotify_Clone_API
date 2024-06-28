@@ -15,9 +15,14 @@ INSTALLED_APPS += [
     "silk",
 ]
 
+# CORS
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+CORS_URLS_REGEX = r"^/api/.*$"
+
 MIDDLEWARE += [
     # TODO: Delete JWTFromCookieMiddleware
-    "corsheaders.middleware.CorsMiddleware",
     # "apps.users.middleware.JWTFromCookieMiddleware",
 ]
 
@@ -60,7 +65,7 @@ DEBUG_TOOLBAR_PANELS = [
     "debug_toolbar.panels.templates.TemplatesPanel",
     "debug_toolbar.panels.cache.CachePanel",
     "debug_toolbar.panels.signals.SignalsPanel",
-    # "cachalot.panels.CachalotPanel",
+    "cachalot.panels.CachalotPanel",
 ]
 
 DEBUG_TOOLBAR_CONFIG = {

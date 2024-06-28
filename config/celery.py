@@ -22,7 +22,7 @@ app.conf.beat_schedule = {
     # },
     "send-verification-emails": {
         "task": "apps.artists.tasks.send_verification_emails",
-        "schedule": crontab(hour="12", minute=""),
+        "schedule": crontab(hour="12", minute="0"),
     },
 }
 

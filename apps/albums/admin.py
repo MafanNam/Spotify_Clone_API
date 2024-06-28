@@ -6,6 +6,7 @@ from .models import Album
 
 class TrackInline(admin.TabularInline):
     model = Track
+    extra = 0
 
 
 @admin.register(Album)
