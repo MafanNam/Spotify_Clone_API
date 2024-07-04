@@ -21,6 +21,7 @@ class ShortAlbumSerializer(serializers.ModelSerializer):
 
 
 class TrackSerializer(serializers.ModelSerializer):
+
     artist = ShortArtistSerializer(read_only=True, many=False)
     license = LicenseSerializer(read_only=True, many=False)
     genre = GenreSerializer(read_only=True, many=False)
@@ -65,6 +66,7 @@ class ShortTrackSerializer(TrackSerializer):
             "slug",
             "artist",
             "title",
+            "file",
             "duration",
             "image",
             "genre",
