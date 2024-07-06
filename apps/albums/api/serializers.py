@@ -21,10 +21,12 @@ class AlbumSerializer(serializers.ModelSerializer):
             "artist",
             "track_slug",
             "image",
+            "color",
             "is_private",
             "created_at",
             "updated_at",
         ]
+        extra_kwargs = {"color": {"read_only": True}}
 
     @extend_schema_field(OpenApiTypes.STR)
     def get_track_slug(self, obj):
@@ -58,8 +60,10 @@ class AlbumDetailSerializer(serializers.ModelSerializer):
             "title",
             "artist",
             "image",
+            "color",
             "tracks",
             "is_private",
             "created_at",
             "updated_at",
         ]
+        extra_kwargs = {"color": {"read_only": True}}

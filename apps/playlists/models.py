@@ -1,4 +1,5 @@
 from autoslug import AutoSlugField
+from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Sum
@@ -30,6 +31,7 @@ class Playlist(TimeStampedModel):
         blank=True,
         default="default/track.jpg",
     )
+    color = ColorField(image_field="image")
     release_date = models.DateField(_("release date"), blank=True, null=True, default=timezone.now)
     is_private = models.BooleanField(_("is_private"), default=False)
 

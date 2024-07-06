@@ -1,4 +1,5 @@
 from autoslug import AutoSlugField
+from colorfield.fields import ColorField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -28,6 +29,7 @@ class Album(TimeStampedModel):
         blank=True,
         default="default/album.jpg",
     )
+    color = ColorField(image_field="image")
     is_private = models.BooleanField(_("is_private"), default=False)
 
     class Meta:

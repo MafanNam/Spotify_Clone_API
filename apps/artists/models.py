@@ -1,4 +1,5 @@
 from autoslug import AutoSlugField
+from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -32,6 +33,7 @@ class Artist(TimeStampedModel):
         blank=True,
         default="default/artist.jpg",
     )
+    color = ColorField(image_field="image")
     is_verify = models.BooleanField(_("is verify"), default=False)
 
     class Meta:

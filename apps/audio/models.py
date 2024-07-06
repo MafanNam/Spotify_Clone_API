@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from autoslug import AutoSlugField
+from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
@@ -39,6 +40,7 @@ class Track(TimeStampedModel):
         blank=True,
         default="default/track.jpg",
     )
+    color = ColorField(image_field="image")
     license = models.ForeignKey(
         License,
         on_delete=models.SET_NULL,

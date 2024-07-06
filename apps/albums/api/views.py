@@ -8,7 +8,7 @@ from apps.core import filters, pagination
 from apps.core.permissions import ArtistRequiredPermission
 
 
-class AlbumListCreateAPIView(generics.ListAPIView):
+class AlbumListAPIView(generics.ListAPIView):
     """
     Album List API View. Public view.
     """

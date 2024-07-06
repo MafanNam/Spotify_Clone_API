@@ -22,10 +22,11 @@ class ArtistSerializer(serializers.ModelSerializer):
             "last_name",
             "display_name",
             "image",
+            "color",
             "track_slug",
             "is_verify",
         ]
-        extra_kwargs = {"is_verify": {"read_only": True}}
+        extra_kwargs = {"is_verify": {"read_only": True}, "color": {"read_only": True}}
 
     @extend_schema_field(OpenApiTypes.STR)
     def get_track_slug(self, obj):
@@ -50,7 +51,7 @@ class ArtistSerializer(serializers.ModelSerializer):
 class ShortArtistSerializer(ArtistSerializer):
     class Meta:
         model = Artist
-        fields = ["id", "slug", "display_name", "image", "is_verify"]
+        fields = ["id", "slug", "display_name", "image", "color", "is_verify"]
 
 
 class LicenseSerializer(serializers.ModelSerializer):
