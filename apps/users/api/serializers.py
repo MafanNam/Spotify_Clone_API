@@ -38,4 +38,4 @@ class CustomUserSerializer(CountryFieldMixin, UserSerializer):
 class ShortCustomUserSerializer(CustomUserSerializer):
     class Meta(UserSerializer.Meta):
         model = User
-        fields = ("id", "display_name", "type_profile", "image", "is_premium")
+        fields = ("id", "display_name", "type_profile", "image", "followers_count", "is_premium")

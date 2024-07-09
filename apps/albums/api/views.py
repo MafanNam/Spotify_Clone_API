@@ -17,6 +17,7 @@ class AlbumListAPIView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
     pagination_class = pagination.StandardResultsSetPagination
     filter_backends = [dj_filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = filters.AlbumFilter
     search_fields = ["artist__display_name", "title", "tracks__title"]
     ordering_fields = ["created_at"]
 

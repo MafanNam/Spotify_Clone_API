@@ -1,6 +1,7 @@
 import os
 
 from django.core.exceptions import ValidationError
+from PIL import Image
 
 
 def get_path_upload_image_user(instance, filename):
@@ -53,3 +54,11 @@ def validate_track_size(file_obj):
     megabyte_limit = 10
     if file_obj.size > megabyte_limit * 1024**6:
         raise ValidationError(f"Max size for audio file {megabyte_limit}MB")
+
+
+def generate_color_from_image(image):
+    image = Image.open(image)
+    img = image.resize((50, 50))  # Resize for faster processing
+    pixels = list(img.getdata())
+    avg_color = tuple(sum(col) // len(col) for col in zip(*pixels))
+    return f"#{avg_color[0]:02x}{avg_color[1]:02x}{avg_color[2]:02x}"

@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
-from apps.core.services import get_path_upload_image_genre, validate_image_size
+from apps.core.services import generate_color_from_image, get_path_upload_image_genre, validate_image_size
 
 
 class Genre(TimeStampedModel):
@@ -17,7 +17,7 @@ class Genre(TimeStampedModel):
         blank=True,
         default="default/track.jpg",
     )
-    color = ColorField(image_field="image")
+    color = ColorField(default="#202020")
 
     class Meta:
         verbose_name = _("Genre")
@@ -26,3 +26,8 @@ class Genre(TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.image:
+            self.color = generate_color_from_image(self.image)
+        super().save(*args, **kwargs)

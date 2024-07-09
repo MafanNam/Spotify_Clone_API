@@ -11,6 +11,7 @@ class ArtistSerializer(serializers.ModelSerializer):
     user = ShortCustomUserSerializer(read_only=True, many=False)
     # track_file = serializers.SerializerMethodField(read_only=True)
     track_slug = serializers.SerializerMethodField(read_only=True)
+    artist_listeners = serializers.IntegerField(source="get_artist_listeners", read_only=True)
 
     class Meta:
         model = Artist
@@ -24,6 +25,7 @@ class ArtistSerializer(serializers.ModelSerializer):
             "image",
             "color",
             "track_slug",
+            "artist_listeners",
             "is_verify",
         ]
         extra_kwargs = {"is_verify": {"read_only": True}, "color": {"read_only": True}}

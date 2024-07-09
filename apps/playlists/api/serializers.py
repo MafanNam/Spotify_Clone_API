@@ -13,6 +13,7 @@ class PlaylistSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(read_only=True, many=False)
     tracks = ShortTrackSerializer(many=True, read_only=True)
     duration = serializers.DurationField(source="total_duration", read_only=True)
+    favorite_count = serializers.IntegerField(source="get_favorite_count", read_only=True)
 
     class Meta:
         model = Playlist
@@ -20,6 +21,7 @@ class PlaylistSerializer(serializers.ModelSerializer):
             "id",
             "slug",
             "title",
+            "description",
             "image",
             "color",
             "user",
@@ -28,6 +30,7 @@ class PlaylistSerializer(serializers.ModelSerializer):
             "release_date",
             "is_private",
             "duration",
+            "favorite_count",
             "created_at",
             "updated_at",
         ]
@@ -35,7 +38,6 @@ class PlaylistSerializer(serializers.ModelSerializer):
 
 
 class ShortPlaylistSerializer(PlaylistSerializer):
-    # track_file = serializers.SerializerMethodField(read_only=True)
     track_slug = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -57,19 +59,6 @@ class ShortPlaylistSerializer(PlaylistSerializer):
         track = obj.tracks.first()
         if track:
             return track.slug
-
-    # @extend_schema_field(ShortTrackSerializer)
-    # def get_first_track(self, obj):
-    #     track = obj.tracks.first()
-    #     if track:
-    #         return ShortTrackSerializer(track).data
-
-    # @extend_schema_field(OpenApiTypes.URI_REF)
-    # def get_track_file(self, obj):
-    #     track = obj.tracks.first()
-    #     request = self.context.get("request")
-    #     if track:
-    #         return request.build_absolute_uri(track.file.url)
 
 
 class FavoritePlaylistSerializer(serializers.ModelSerializer):

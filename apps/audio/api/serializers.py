@@ -73,6 +73,7 @@ class ShortTrackSerializer(TrackSerializer):
             "duration",
             "image",
             "color",
+            "plays_count",
             "genre",
             "album",
         ]

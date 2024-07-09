@@ -12,6 +12,7 @@ from apps.albums.models import Album
 from apps.artists.models import Artist, License
 from apps.core.models import TimeStampedModel
 from apps.core.services import (
+    generate_color_from_image,
     get_path_upload_image_track,
     get_path_upload_track,
     validate_image_size,
@@ -40,7 +41,7 @@ class Track(TimeStampedModel):
         blank=True,
         default="default/track.jpg",
     )
-    color = ColorField(image_field="image")
+    color = ColorField(default="#202020")
     license = models.ForeignKey(
         License,
         on_delete=models.SET_NULL,
@@ -101,6 +102,8 @@ class Track(TimeStampedModel):
             if audio is not None:
                 print(audio.info)
                 self.duration = timedelta(seconds=audio.info.length)
+        if self.image:
+            self.color = generate_color_from_image(self.image)
         super().save(*args, **kwargs)
 
     def __str__(self):
