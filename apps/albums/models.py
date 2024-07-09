@@ -1,10 +1,11 @@
 from autoslug import AutoSlugField
+from colorfield.fields import ColorField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.artists.models import Artist
 from apps.core.models import TimeStampedModel
-from apps.core.services import get_path_upload_image_album, validate_image_size
+from apps.core.services import generate_color_from_image, get_path_upload_image_album, validate_image_size
 
 
 class Album(TimeStampedModel):
@@ -28,6 +29,7 @@ class Album(TimeStampedModel):
         blank=True,
         default="default/album.jpg",
     )
+    color = ColorField(default="#202020")
     is_private = models.BooleanField(_("is_private"), default=False)
 
     class Meta:
@@ -37,3 +39,11 @@ class Album(TimeStampedModel):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if self.image:
+            self.color = generate_color_from_image(self.image)
+        super().save(*args, **kwargs)
+        # if generate_color:
+        #     from apps.albums.tasks import generate_album_color
+        #     generate_album_color.delay(self.id)

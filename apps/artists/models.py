@@ -1,10 +1,11 @@
 from autoslug import AutoSlugField
+from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
-from apps.core.services import get_path_upload_image_artist, validate_image_size
+from apps.core.services import generate_color_from_image, get_path_upload_image_artist, validate_image_size
 
 User = get_user_model()
 
@@ -32,6 +33,7 @@ class Artist(TimeStampedModel):
         blank=True,
         default="default/artist.jpg",
     )
+    color = ColorField(default="#202020")
     is_verify = models.BooleanField(_("is verify"), default=False)
 
     class Meta:
@@ -42,6 +44,8 @@ class Artist(TimeStampedModel):
     def save(self, *args, **kwargs):
         if self.display_name == "" or self.display_name is None:
             self.display_name = f"{self.first_name} {self.last_name}"
+        if self.image:
+            self.color = generate_color_from_image(self.image)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -51,6 +55,13 @@ class Artist(TimeStampedModel):
     @property
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+    @property
+    def get_artist_listeners(self):
+        count = 0
+        for track in self.tracks.all():
+            count += track.plays_count
+        return count
 
 
 class ArtistVerificationRequest(TimeStampedModel):

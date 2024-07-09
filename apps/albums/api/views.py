@@ -8,7 +8,7 @@ from apps.core import filters, pagination
 from apps.core.permissions import ArtistRequiredPermission
 
 
-class AlbumListCreateAPIView(generics.ListAPIView):
+class AlbumListAPIView(generics.ListAPIView):
     """
     Album List API View. Public view.
     """
@@ -17,6 +17,7 @@ class AlbumListCreateAPIView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
     pagination_class = pagination.StandardResultsSetPagination
     filter_backends = [dj_filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = filters.AlbumFilter
     search_fields = ["artist__display_name", "title", "tracks__title"]
     ordering_fields = ["created_at"]
 

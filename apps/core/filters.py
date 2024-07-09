@@ -35,6 +35,15 @@ class ArtistFilter(django_filters.FilterSet):
         }
 
 
+class AlbumFilter(django_filters.FilterSet):
+    class Meta:
+        model = Album
+        fields = {
+            "is_private": ["exact"],
+            "artist__slug": ["exact"],
+        }
+
+
 class MyAlbumFilter(django_filters.FilterSet):
     class Meta:
         model = Album
