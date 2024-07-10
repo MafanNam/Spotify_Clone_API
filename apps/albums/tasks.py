@@ -12,7 +12,7 @@ def generate_album_color(album_id):
     album = Album.objects.get(id=album_id)
     logger.info(f"Album: {album}")
     if album.image:
-        logger.info(f"in album image")
+        logger.info("in album image")
         album.color = generate_color_from_image(album.image)
         logger.info(f"color: {album.color}")
         logger.info(f"generated color: {generate_color_from_image(album.image)}")

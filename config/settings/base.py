@@ -249,6 +249,10 @@ DJOSER = {
         "current_user": "apps.users.api.serializers.CustomUserSerializer",
         "user_delete": "djoser.serializers.UserDeleteSerializer",
     },
+    "PERMISSIONS": {
+        "user": ["apps.core.permissions.CurrentUserOrReadOnlyPermission"],
+        "user_list": ["rest_framework.permissions.AllowAny"],
+    },
     "EMAIL": {
         "activation": "apps.users.email.ActivationEmail",
         "confirmation": "apps.users.email.ConfirmationEmail",
@@ -259,6 +263,7 @@ DJOSER = {
     },
     "PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND": True,
     "USERNAME_RESET_SHOW_EMAIL_NOT_FOUND": True,
+    "HIDE_USERS": False,
     "TOKEN_MODEL": None,
 }
 
