@@ -1,8 +1,8 @@
 import logging
 
-from config import celery_app as app
 from apps.albums.models import Album
 from apps.core.services import generate_color_from_image
+from config import celery_app as app
 
 logger = logging.getLogger(__name__)
 

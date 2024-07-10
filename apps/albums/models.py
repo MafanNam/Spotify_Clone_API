@@ -1,6 +1,8 @@
 from autoslug import AutoSlugField
 from colorfield.fields import ColorField
 from django.db import models
+from django.db.models import Sum
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.artists.models import Artist
@@ -21,6 +23,7 @@ class Album(TimeStampedModel):
         default="",
     )
     title = models.CharField(_("title"), max_length=255, unique=True)
+    description = models.TextField(_("description"), blank=True, max_length=500)
     slug = AutoSlugField(populate_from="title", unique=True)
     image = models.ImageField(
         verbose_name=_("image"),
@@ -30,12 +33,18 @@ class Album(TimeStampedModel):
         default="default/album.jpg",
     )
     color = ColorField(default="#202020")
+    release_date = models.DateField(_("release date"), blank=True, null=True, default=timezone.now)
     is_private = models.BooleanField(_("is_private"), default=False)
 
     class Meta:
         verbose_name = _("album")
         verbose_name_plural = _("albums")
         ordering = ["-created_at", "-updated_at"]
+
+    @property
+    def total_duration(self):
+        total_duration = self.tracks.aggregate(total_duration=Sum("duration"))["total_duration"]
+        return total_duration
 
     def __str__(self):
         return self.title

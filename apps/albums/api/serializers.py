@@ -23,6 +23,7 @@ class AlbumSerializer(serializers.ModelSerializer):
             "image",
             "color",
             "is_private",
+            "release_date",
             "created_at",
             "updated_at",
         ]
@@ -51,6 +52,7 @@ class AlbumSerializer(serializers.ModelSerializer):
 class AlbumDetailSerializer(serializers.ModelSerializer):
     artist = ShortArtistSerializer(read_only=True, many=False)
     tracks = ShortTrackSerializer(many=True, read_only=True)
+    duration = serializers.DurationField(source="total_duration", read_only=True)
 
     class Meta:
         model = Album
@@ -58,11 +60,14 @@ class AlbumDetailSerializer(serializers.ModelSerializer):
             "id",
             "slug",
             "title",
+            "description",
             "artist",
             "image",
             "color",
             "tracks",
+            "duration",
             "is_private",
+            "release_date",
             "created_at",
             "updated_at",
         ]
