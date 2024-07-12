@@ -133,3 +133,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def following_count(self):
         return self.following.count()
+
+    def get_following(self):
+        return self.following.all()
+
+    def get_followers(self):
+        return self.followers.all()

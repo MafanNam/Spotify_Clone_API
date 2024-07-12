@@ -2,11 +2,15 @@ from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from djoser.social.views import ProviderAuthView
 from drf_spectacular.utils import extend_schema
-from rest_framework import permissions, status, views
+from rest_framework import generics, permissions, status, views
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+
+from apps.core import pagination
+from apps.users.api.serializers import ShortCustomUserSerializer
 
 User = get_user_model()
 
@@ -234,3 +238,52 @@ class UserUnfollowAPIView(views.APIView):
 
         user_to_unfollow.unfollow(user)
         return Response({"msg": "You have unfollowed this user"}, status.HTTP_200_OK)
+
+
+@extend_schema(tags=["User Following"])
+class ListUserFollowersAPIView(generics.ListAPIView):
+    """
+    List followers of a user. Public users can see their followers.
+    """
+
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ShortCustomUserSerializer
+    pagination_class = None
+    lookup_field = "id"
+
+    def get_queryset(self):
+        user = get_object_or_404(User, id=self.kwargs["user_id"])
+        return user.get_followers()
+
+
+@extend_schema(tags=["User Following"])
+class ListUserFollowingAPIView(generics.ListAPIView):
+    """
+    List following of a user. Public users can see their following.
+    """
+
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ShortCustomUserSerializer
+    pagination_class = None
+    lookup_field = "id"
+
+    def get_queryset(self):
+        user = get_object_or_404(User, id=self.kwargs["user_id"])
+        return user.get_following()
+
+
+@extend_schema(tags=["User Profile"])
+class ListUsersProfileAPIView(generics.ListAPIView):
+    """
+    List
+    """
+
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ShortCustomUserSerializer
+    pagination_class = pagination.StandardResultsSetPagination
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ["display_name", "playlists__title"]
+    ordering_fields = ["created_at", "followers_count"]
+
+    def get_queryset(self):
+        return User.objects.filter(type_profile="user", is_staff=False, is_superuser=False, is_active=True)
