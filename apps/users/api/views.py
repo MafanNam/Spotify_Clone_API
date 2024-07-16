@@ -5,12 +5,18 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import generics, permissions, status, views
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import get_object_or_404
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 from apps.core import pagination
-from apps.users.api.serializers import ShortCustomUserSerializer
+from apps.core.permissions import IsOwnerUserPermission
+from apps.users.api.serializers import (
+    CustomUserUpdateSerializer,
+    ShortCustomUserSerializer,
+    UpdateUserProfileImageSerializer,
+)
 
 User = get_user_model()
 
@@ -275,7 +281,7 @@ class ListUserFollowingAPIView(generics.ListAPIView):
 @extend_schema(tags=["User Profile"])
 class ListUsersProfileAPIView(generics.ListAPIView):
     """
-    List
+    List User Profile. Public users can see other profile.
     """
 
     permission_classes = [permissions.AllowAny]
@@ -287,3 +293,30 @@ class ListUsersProfileAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         return User.objects.filter(type_profile="user", is_staff=False, is_superuser=False, is_active=True)
+
+
+@extend_schema(tags=["User Profile"])
+class DetailMyUserProfileAPIView(generics.RetrieveUpdateAPIView):
+    """
+    Retrieve user profile. Only users can see their profile.
+    """
+
+    permission_classes = [IsOwnerUserPermission]
+    serializer_class = CustomUserUpdateSerializer
+
+    def get_object(self):
+        return self.request.user
+
+
+@extend_schema(tags=["User Profile"])
+class MyUserProfileImageAPIView(generics.UpdateAPIView):
+    """
+    Update user profile image. Only users can update their profile image.
+    """
+
+    permission_classes = [IsOwnerUserPermission]
+    serializer_class = UpdateUserProfileImageSerializer
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_object(self):
+        return self.request.user

@@ -42,7 +42,26 @@ class CustomUserSerializer(CountryFieldMixin, UserSerializer):
         read_only_fields = ("email", "type_profile", "is_premium", "color")
 
 
+class CustomUserUpdateSerializer(serializers.ModelSerializer):
+    class Meta(UserSerializer.Meta):
+        model = User
+        fields = (
+            "id",
+            "email",
+            "display_name",
+            "gender",
+            "country",
+            "is_premium",
+        )
+
+
 class ShortCustomUserSerializer(CustomUserSerializer):
     class Meta(UserSerializer.Meta):
         model = User
         fields = ("id", "display_name", "type_profile", "artist_slug", "image", "followers_count", "is_premium")
+
+
+class UpdateUserProfileImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("image",)

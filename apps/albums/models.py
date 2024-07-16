@@ -1,5 +1,6 @@
 from autoslug import AutoSlugField
 from colorfield.fields import ColorField
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Sum
 from django.utils import timezone
@@ -8,6 +9,8 @@ from django.utils.translation import gettext_lazy as _
 from apps.artists.models import Artist
 from apps.core.models import TimeStampedModel
 from apps.core.services import generate_color_from_image, get_path_upload_image_album, validate_image_size
+
+User = get_user_model()
 
 
 class Album(TimeStampedModel):
@@ -56,3 +59,20 @@ class Album(TimeStampedModel):
         # if generate_color:
         #     from apps.albums.tasks import generate_album_color
         #     generate_album_color.delay(self.id)
+
+
+class FavoriteAlbum(TimeStampedModel):
+    """
+    Favorite album model.
+    """
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorite_albums")
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="favorite_albums")
+
+    class Meta:
+        verbose_name = _("Favorite album")
+        verbose_name_plural = _("Favorite albums")
+        ordering = ["-created_at", "-updated_at"]
+
+    def __str__(self):
+        return f"{self.user} is favorite {self.album.title}"

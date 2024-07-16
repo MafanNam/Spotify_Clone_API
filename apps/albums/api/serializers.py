@@ -2,9 +2,9 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from apps.albums.models import Album
+from apps.albums.models import Album, FavoriteAlbum
 from apps.artists.api.serializers import ShortArtistSerializer
-from apps.audio.api.serializers import ShortTrackSerializer
+from apps.audio.api.serializers import ShortAlbumSerializer, ShortTrackSerializer
 
 
 class AlbumSerializer(serializers.ModelSerializer):
@@ -72,3 +72,11 @@ class AlbumDetailSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         extra_kwargs = {"color": {"read_only": True}}
+
+
+class FavoriteAlbumSerializer(serializers.ModelSerializer):
+    album = ShortAlbumSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = FavoriteAlbum
+        fields = ["id", "album", "created_at", "updated_at"]

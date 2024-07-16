@@ -21,4 +21,6 @@ urlpatterns = [
     path("users/<int:user_id>/followers/", views.ListUserFollowersAPIView.as_view(), name="list-user-followers"),
     path("users/<int:user_id>/following/", views.ListUserFollowingAPIView.as_view(), name="list-user-following"),
     path("users/profiles/", views.ListUsersProfileAPIView.as_view(), name="list-users-profile"),
+    path("users/profiles/my/", views.DetailMyUserProfileAPIView.as_view(), name="detail-my-user-profile"),
+    path("users/profiles/my/image/", views.MyUserProfileImageAPIView.as_view(), name="update-my-user-profile-image"),
 ]

@@ -62,9 +62,8 @@ class ShortPlaylistSerializer(PlaylistSerializer):
 
 
 class FavoritePlaylistSerializer(serializers.ModelSerializer):
-    user = ShortCustomUserSerializer(read_only=True, many=False)
     playlist = ShortPlaylistSerializer(read_only=True, many=False)
 
     class Meta:
         model = FavoritePlaylist
-        fields = ["id", "user", "playlist", "created_at", "updated_at"]
+        fields = ["id", "playlist", "created_at", "updated_at"]
