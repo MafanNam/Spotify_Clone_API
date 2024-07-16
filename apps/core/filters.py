@@ -1,7 +1,7 @@
 import django_filters
 
 from apps.albums.models import Album, FavoriteAlbum
-from apps.artists.models import Artist
+from apps.artists.models import Artist, FavoriteArtist
 from apps.audio.models import Track
 from apps.payments.models import Payment
 from apps.playlists.models import FavoritePlaylist, Playlist
@@ -95,7 +95,7 @@ class FavoriteAlbumFilter(django_filters.FilterSet):
 
 class FavoriteArtistFilter(django_filters.FilterSet):
     class Meta:
-        model = FavoriteAlbum
+        model = FavoriteArtist
         fields = {
             "artist__slug": ["exact"],
             "user__id": ["exact"],
