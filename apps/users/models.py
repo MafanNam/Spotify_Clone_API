@@ -1,3 +1,4 @@
+from colorfield.fields import ColorField
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.utils import timezone
@@ -5,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 from model_utils import Choices
 
-from apps.core.services import get_path_upload_image_user, validate_image_size
+from apps.core.services import generate_color_from_image, get_path_upload_image_user, validate_image_size
 
 from ..subscriptions.models import SubscriptionPlan
 from .managers import CustomUserManager
@@ -50,6 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         default="default/profile.jpg",
     )
+    color = ColorField(default="#202020")
     country = CountryField(
         verbose_name=_("country"),
         blank_label="Select Country",
@@ -97,6 +99,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         email_username, _ = self.email.split("@", 1)
         if self.display_name == "" or self.display_name is None:
             self.display_name = email_username
+        if self.image:
+            self.color = generate_color_from_image(self.image)
         super().save(*args, **kwargs)
 
     @property
@@ -125,3 +129,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def follower_count(self):
         return self.followers.count()
+
+    @property
+    def following_count(self):
+        return self.following.count()
+
+    def get_following(self):
+        return self.following.all()
+
+    def get_followers(self):
+        return self.followers.all()

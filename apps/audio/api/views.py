@@ -97,6 +97,31 @@ class TrackRecentlyPlayedAPIView(generics.ListAPIView):
         return Track.objects.none()
 
 
+class TrackRecentlyPlayedByUserAPIView(generics.ListAPIView):
+    """
+    List all recently played track. Public view.
+    Filter last played 10 tracks by user_id.
+    """
+
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ShortTrackSerializer
+    pagination_class = pagination.StandardResultsSetPagination
+    filter_backends = [dj_filters.DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = filters.TrackFilter
+    search_fields = ["title", "artist__display_name", "genre__name", "album__title"]
+    ordering_fields = ["release_date", "created_at", "plays_count", "downloads_count", "likes_count"]
+    lookup_field = "id"
+
+    def get_queryset(self):
+        last_played = (
+            Track.objects.select_related("artist", "license", "genre", "album")
+            .filter(is_private=False, plays__user=self.kwargs.get("id", None))
+            .order_by("-plays__played_at")[:10]
+        )
+
+        return last_played
+
+
 class TrackMyListCreateAPIView(generics.ListCreateAPIView):
     """
     List all my tracks.

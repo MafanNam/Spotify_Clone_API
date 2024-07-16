@@ -18,6 +18,9 @@ class CustomUserSerializer(CountryFieldMixin, UserSerializer):
     gender = serializers.CharField(source="get_gender_display", read_only=True)
     country = CountryField(name_only=True)
     followers_count = serializers.IntegerField(source="followers.count", read_only=True)
+    following_count = serializers.IntegerField(source="following.count", read_only=True)
+    playlists_count = serializers.IntegerField(source="playlists.count", read_only=True)
+    artist_slug = serializers.CharField(source="artist.slug", read_only=True)
 
     class Meta(UserSerializer.Meta):
         model = User
@@ -28,14 +31,37 @@ class CustomUserSerializer(CountryFieldMixin, UserSerializer):
             "gender",
             "country",
             "image",
+            "color",
             "type_profile",
+            "artist_slug",
             "is_premium",
             "followers_count",
+            "following_count",
+            "playlists_count",
         )
-        read_only_fields = ("email", "type_profile", "is_premium")
+        read_only_fields = ("email", "type_profile", "is_premium", "color")
+
+
+class CustomUserUpdateSerializer(serializers.ModelSerializer):
+    class Meta(UserSerializer.Meta):
+        model = User
+        fields = (
+            "id",
+            "email",
+            "display_name",
+            "gender",
+            "country",
+            "is_premium",
+        )
 
 
 class ShortCustomUserSerializer(CustomUserSerializer):
     class Meta(UserSerializer.Meta):
         model = User
-        fields = ("id", "display_name", "type_profile", "image", "followers_count", "is_premium")
+        fields = ("id", "display_name", "type_profile", "artist_slug", "image", "followers_count", "is_premium")
+
+
+class UpdateUserProfileImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("image",)

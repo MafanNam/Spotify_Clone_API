@@ -79,6 +79,7 @@ class FavoritePlaylist(TimeStampedModel):
     class Meta:
         verbose_name = _("Favorite playlist")
         verbose_name_plural = _("Favorite playlists")
+        unique_together = ("user", "playlist")
         ordering = ["-created_at", "-updated_at"]
 
     def __str__(self):

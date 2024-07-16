@@ -99,3 +99,21 @@ class License(TimeStampedModel):
     def __str__(self):
         """String representation of the license."""
         return self.name
+
+
+class FavoriteArtist(TimeStampedModel):
+    """
+    Favorite artist model.
+    """
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorite_artists")
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name="favorite_artists")
+
+    class Meta:
+        verbose_name = _("Favorite artist")
+        verbose_name_plural = _("Favorite artists")
+        unique_together = ("user", "artist")
+        ordering = ["-created_at", "-updated_at"]
+
+    def __str__(self):
+        return f"{self.user} is favorite {self.artist.display_name}"

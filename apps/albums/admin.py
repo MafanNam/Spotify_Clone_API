@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from ..audio.models import Track
-from .models import Album
+from .models import Album, FavoriteAlbum
 
 
 class TrackInline(admin.TabularInline):
@@ -19,3 +19,11 @@ class AlbumAdmin(admin.ModelAdmin):
     search_fields = ("title", "artist__display_name")
 
     inlines = [TrackInline]
+
+
+@admin.register(FavoriteAlbum)
+class FavoriteAlbumAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "album", "created_at")
+    list_display_links = ("id", "user", "album")
+    list_filter = ("created_at",)
+    search_fields = ("user__display_name", "album__title")
