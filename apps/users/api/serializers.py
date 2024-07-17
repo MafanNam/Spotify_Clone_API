@@ -50,9 +50,11 @@ class CustomUserUpdateSerializer(serializers.ModelSerializer):
             "email",
             "display_name",
             "gender",
+            "type_profile",
             "country",
             "is_premium",
         )
+        read_only_fields = ("email", "type_profile", "is_premium")
 
 
 class ShortCustomUserSerializer(CustomUserSerializer):

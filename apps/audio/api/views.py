@@ -237,16 +237,20 @@ class DownloadTrackAPIView(views.APIView):
             return Http404
 
 
-class TrackLikeAPIView(views.APIView):
+class TrackLikeUnlikeAPIView(views.APIView):
     """
-    Like track. Only for authenticated user.
-    - If user has not liked the track, add the like and increase the likes count and return status `HTTP_200_OK`.
-    - If user has already liked the track, return a message and status `HTTP_400_BAD_REQUEST`.
+    Like/Unlike track. Only for authenticated user.
+    - `POST`: Like track.
+    1. If user has not liked the track, add the like and increase the likes count and return status `HTTP_200_OK`.
+    2. If user has already liked the track, return a message and status `HTTP_400_BAD_REQUEST`.
+    - `DELETE`: Unlike track.
+    1. If user has not liked the track, return a message and status `HTTP_400_BAD_REQUEST`.
+    2. If user has liked the track, remove the like and decrease the likes count and return status `HTTP_200_OK`.
     """
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = None
-    http_method_names = ["post"]
+    http_method_names = ["post", "delete"]
 
     def get_object(self):
         return get_object_or_404(Track, slug=self.kwargs.get("slug"), is_private=False)
@@ -260,21 +264,6 @@ class TrackLikeAPIView(views.APIView):
             return Response({"likes_count": track.likes_count}, status.HTTP_200_OK)
         # If user has already liked the track, return a message
         return Response({"msg": "You have already liked this track."}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class TrackUnlikeAPIView(views.APIView):
-    """
-    Unlike track. Only for authenticated user.
-    - If user has not liked the track, return a message and status `HTTP_400_BAD_REQUEST`.
-    - If user has liked the track, remove the like and decrease the likes count and return status `HTTP_200_OK`.
-    """
-
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = None
-    http_method_names = ["delete"]
-
-    def get_object(self):
-        return get_object_or_404(Track, slug=self.kwargs.get("slug"), is_private=False)
 
     def delete(self, request, *args, **kwargs):
         track = self.get_object()

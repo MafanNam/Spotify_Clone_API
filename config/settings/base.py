@@ -233,8 +233,8 @@ DJOSER = {
     "USER_CREATE_PASSWORD_RETYPE": True,
     "USERNAME_CHANGED_EMAIL_CONFIRMATION": True,
     "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
-    "PASSWORD_RESET_CONFIRM_URL": "password-reset/{uid}/{token}",
-    "USERNAME_RESET_CONFIRM_URL": "email-reset/{uid}/{token}",
+    "PASSWORD_RESET_CONFIRM_URL": "account/auth/password-reset/{uid}/{token}",
+    "USERNAME_RESET_CONFIRM_URL": "account/auth/email-reset/{uid}/{token}",
     "SOCIAL_AUTH_TOKEN_STRATEGY": "djoser.social.token.jwt.TokenStrategy",
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": env.list(
         "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS",
@@ -242,7 +242,7 @@ DJOSER = {
             "http://localhost:3000",
         ],
     ),
-    "ACTIVATION_URL": "activate/{uid}/{token}",
+    "ACTIVATION_URL": "account/auth/activate/{uid}/{token}",
     "SERIALIZERS": {
         "user_create_password_retype": "apps.users.api.serializers.CustomUserCreatePasswordRetypeSerializer",
         "user": "apps.users.api.serializers.CustomUserSerializer",
