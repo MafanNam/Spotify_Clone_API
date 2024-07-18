@@ -42,7 +42,7 @@ class CustomUserSerializer(CountryFieldMixin, UserSerializer):
         read_only_fields = ("email", "type_profile", "is_premium", "color")
 
 
-class CustomUserUpdateSerializer(serializers.ModelSerializer):
+class CustomUserUpdateSerializer(CountryFieldMixin, serializers.ModelSerializer):
     class Meta(UserSerializer.Meta):
         model = User
         fields = (
