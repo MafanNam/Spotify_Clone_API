@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from apps.audio.api.serializers import ShortTrackSerializer
 from apps.other.api.serializers import GenreSerializer
+from apps.other.models import Genre
 from apps.playlists.models import FavoritePlaylist, Playlist
 from apps.users.api.serializers import ShortCustomUserSerializer
 
@@ -35,6 +36,23 @@ class PlaylistSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         extra_kwargs = {"color": {"read_only": True}}
+
+
+class UpdatePlaylistSerializer(PlaylistSerializer):
+    genre = serializers.PrimaryKeyRelatedField(queryset=Genre.objects.all())
+
+    class Meta:
+        model = Playlist
+        fields = [
+            "id",
+            "slug",
+            "title",
+            "description",
+            "image",
+            "genre",
+            "release_date",
+            "is_private",
+        ]
 
 
 class ShortPlaylistSerializer(PlaylistSerializer):

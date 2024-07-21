@@ -49,6 +49,13 @@ class Album(TimeStampedModel):
         total_duration = self.tracks.aggregate(total_duration=Sum("duration"))["total_duration"]
         return total_duration
 
+    @property
+    def get_tracks_listeners(self):
+        count = 0
+        for track in self.tracks.all():
+            count += track.plays_count
+        return count
+
     def __str__(self):
         return self.title
 

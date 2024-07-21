@@ -50,6 +50,7 @@ class CustomUserUpdateSerializer(CountryFieldMixin, serializers.ModelSerializer)
             "email",
             "display_name",
             "gender",
+            "image",
             "type_profile",
             "country",
             "is_premium",

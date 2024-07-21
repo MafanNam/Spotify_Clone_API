@@ -5,9 +5,15 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from apps.analytics.models import PlaylistPlayed
+from apps.audio.models import Track
 from apps.core import filters, pagination
 from apps.core.permissions import IsOwnerUserPermission
-from apps.playlists.api.serializers import FavoritePlaylistSerializer, PlaylistSerializer, ShortPlaylistSerializer
+from apps.playlists.api.serializers import (
+    FavoritePlaylistSerializer,
+    PlaylistSerializer,
+    ShortPlaylistSerializer,
+    UpdatePlaylistSerializer,
+)
 from apps.playlists.models import FavoritePlaylist, Playlist
 
 
@@ -121,7 +127,7 @@ class MyPlaylistDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     """
 
     permission_classes = [IsOwnerUserPermission]
-    serializer_class = PlaylistSerializer
+    serializer_class = UpdatePlaylistSerializer
     lookup_field = "slug"
 
     def get_queryset(self):
@@ -179,3 +185,35 @@ class PlaylistFavoriteCreateAPIView(views.APIView):
         favorite_playlist = get_object_or_404(FavoritePlaylist, user=request.user, playlist=playlist)
         favorite_playlist.delete()
         return Response({"msg": "Playlist removed from favorites"}, status=status.HTTP_204_NO_CONTENT)
+
+
+class AddRemoveTrackPlaylistAPIView(views.APIView):
+    """
+    Add Remove Track Playlist API View.
+    Private view, only for authenticated users and owner.
+    - `POST`: Add track to playlist.
+    1. If track already in playlist, return `HTTP_400_BAD_REQUEST.
+    2. If track not in playlist, add track to playlist and return `HTTP_201_CREATED`.
+    - `DELETE`: Remove track from playlist.
+    1. If track not in playlist, return `HTTP_404_NOT_FOUND`.
+    2. If track in playlist, remove track from playlist and return `HTTP_204_NO_CONTENT`.
+    """
+
+    permission_classes = [IsOwnerUserPermission]
+    serializer_class = None
+
+    def post(self, request, *args, **kwargs):
+        playlist = get_object_or_404(Playlist, user=request.user, slug=kwargs.get("slug"))
+        track = get_object_or_404(Track, id=kwargs.get("id"))
+        if track in playlist.tracks.all():
+            return Response({"msg": "Track already in playlist"}, status=status.HTTP_400_BAD_REQUEST)
+        playlist.tracks.add(track)
+        return Response({"msg": "Track added to playlist"}, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, *args, **kwargs):
+        playlist = get_object_or_404(Playlist, user=request.user, slug=kwargs.get("slug"))
+        track = get_object_or_404(Track, id=kwargs.get("id"))
+        if track not in playlist.tracks.all():
+            return Response({"msg": "Track not in playlist"}, status=status.HTTP_404_NOT_FOUND)
+        playlist.tracks.remove(track)
+        return Response({"msg": "Track removed from playlist"}, status=status.HTTP_204_NO_CONTENT)
