@@ -18,6 +18,8 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 # Application definition
 
 INSTALLED_APPS = [
+    # DJANGO_CUSTOM_ADMIN
+    "jazzmin",
     # DJANGO_APPS
     "django.contrib.admin",
     "django.contrib.auth",
@@ -31,7 +33,7 @@ INSTALLED_APPS = [
     "django_celery_results",
     "django_celery_beat",
     "django_filters",
-    "django_cleanup",
+    # "django_cleanup",
     "django_countries",
     "djcelery_email",
     "djoser",
@@ -182,7 +184,7 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 SPECTACULAR_SETTINGS = {
     "TITLE": "Spotify Clone API",
     "DESCRIPTION": "This is the Spotify-Clone-API project, which is a clone of the Spotify web service."
-    " This API implements a basic set of functionalities allowing users to interact with the platform.",
+                   " This API implements a basic set of functionalities allowing users to interact with the platform.",
     "VERSION": "0.1",
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
@@ -290,5 +292,48 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
+    }
+}
+
+# CUSTOM ADMIN SECTION
+JAZZMIN_SETTINGS = {
+    "site_title": "Spotify Admin",
+    "site_header": "Spotify",
+    "site_brand": "Spotify",
+    "site_logo_classes": "img-circle",
+    "welcome_sign": "Welcome to Spotify Admin",
+    "copyright": "Copyright by Spotify",
+    "show_ui_builder": True,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": True,
+    "brand_small_text": False,
+    "brand_colour": "navbar-success",
+    "accent": "accent-teal",
+    "navbar": "navbar-success navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-olive",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "cyborg",
+    "dark_mode_theme": "cyborg",
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
     }
 }

@@ -15,7 +15,7 @@ urlpatterns = [
         "<slug:slug>/favorite/", views.PlaylistFavoriteCreateAPIView.as_view(), name="playlist-favorite-create-delete"
     ),
     path(
-        "<slug:slug>/add/tracks/<int:id>/",
+        "<slug:slug>/add/tracks/<slug:track_slug>/",
         views.AddRemoveTrackPlaylistAPIView.as_view(),
         name="playlist-track-add-delete",
     ),

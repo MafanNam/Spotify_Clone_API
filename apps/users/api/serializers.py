@@ -16,7 +16,6 @@ class CustomUserCreatePasswordRetypeSerializer(CountryFieldMixin, UserCreatePass
 class CustomUserSerializer(CountryFieldMixin, UserSerializer):
     type_profile = serializers.CharField(source="get_type_profile_display", read_only=True)
     gender = serializers.CharField(source="get_gender_display", read_only=True)
-    country = CountryField(name_only=True)
     followers_count = serializers.IntegerField(source="followers.count", read_only=True)
     following_count = serializers.IntegerField(source="following.count", read_only=True)
     playlists_count = serializers.IntegerField(source="playlists.count", read_only=True)

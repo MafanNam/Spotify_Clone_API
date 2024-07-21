@@ -214,7 +214,7 @@ class AddRemoveTrackPlaylistAPIView(views.APIView):
 
     def post(self, request, *args, **kwargs):
         playlist = get_object_or_404(Playlist, user=request.user, slug=kwargs.get("slug"))
-        track = get_object_or_404(Track, id=kwargs.get("id"))
+        track = get_object_or_404(Track, slug=kwargs.get("track_slug"))
         if track in playlist.tracks.all():
             return Response({"msg": "Track already in playlist"}, status=status.HTTP_400_BAD_REQUEST)
         playlist.tracks.add(track)
@@ -222,7 +222,7 @@ class AddRemoveTrackPlaylistAPIView(views.APIView):
 
     def delete(self, request, *args, **kwargs):
         playlist = get_object_or_404(Playlist, user=request.user, slug=kwargs.get("slug"))
-        track = get_object_or_404(Track, id=kwargs.get("id"))
+        track = get_object_or_404(Track, slug=kwargs.get("track_slug"))
         if track not in playlist.tracks.all():
             return Response({"msg": "Track not in playlist"}, status=status.HTTP_404_NOT_FOUND)
         playlist.tracks.remove(track)

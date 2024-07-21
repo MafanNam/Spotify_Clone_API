@@ -10,7 +10,7 @@ urlpatterns = [
     path("my/<slug:slug>/listen/", views.StreamingMyTrackAPIView.as_view(), name="audio-listen-my"),
     path("", views.TrackListAPIView.as_view(), name="audio-list"),
     path("liked/", views.TrackLikedListAPIView.as_view(), name="audio-liked-list"),
-    path("recently/", views.TrackRecentlyPlayedAPIView.as_view(), name="audio-recently-played"),
+    path("recently/my/", views.TrackRecentlyPlayedAPIView.as_view(), name="audio-recently-played"),
     path(
         "recently/user/<int:id>/",
         views.TrackRecentlyPlayedByUserAPIView.as_view(),
