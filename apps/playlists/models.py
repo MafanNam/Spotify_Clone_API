@@ -1,9 +1,10 @@
+from datetime import date
+
 from autoslug import AutoSlugField
 from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Sum
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.audio.models import Track
@@ -21,8 +22,8 @@ class Playlist(TimeStampedModel):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="playlists")
     tracks = models.ManyToManyField(Track, related_name="playlists")
-    genre = models.ForeignKey(Genre, on_delete=models.SET_NULL, null=True, related_name="playlists")
-    title = models.CharField(_("title"), max_length=255)
+    genre = models.ForeignKey(Genre, on_delete=models.SET_NULL, null=True, blank=True, related_name="playlists")
+    title = models.CharField(_("title"), max_length=255, blank=True)
     description = models.TextField(_("description"), blank=True, max_length=500)
     slug = AutoSlugField(populate_from="title", unique=True)
     image = models.ImageField(
@@ -33,7 +34,7 @@ class Playlist(TimeStampedModel):
         default="default/track.jpg",
     )
     color = ColorField(default="#202020")
-    release_date = models.DateField(_("release date"), blank=True, null=True, default=timezone.now)
+    release_date = models.DateField(_("release date"), blank=True, null=True, default=date.today)
     is_private = models.BooleanField(_("is_private"), default=False)
 
     @property
@@ -60,6 +61,9 @@ class Playlist(TimeStampedModel):
         ordering = ["-created_at", "-updated_at"]
 
     def save(self, *args, **kwargs):
+        if not self.title:
+            max_number = Playlist.objects.filter(user=self.user).count() + 1
+            self.title = f"My Playlist #{max_number}"
         if self.image:
             self.color = generate_color_from_image(self.image)
         super().save(*args, **kwargs)

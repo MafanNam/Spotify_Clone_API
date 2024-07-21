@@ -18,6 +18,8 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
 # Application definition
 
 INSTALLED_APPS = [
+    # DJANGO_CUSTOM_ADMIN
+    "jazzmin",
     # DJANGO_APPS
     "django.contrib.admin",
     "django.contrib.auth",
@@ -31,7 +33,7 @@ INSTALLED_APPS = [
     "django_celery_results",
     "django_celery_beat",
     "django_filters",
-    "django_cleanup",
+    # "django_cleanup",
     "django_countries",
     "djcelery_email",
     "djoser",
@@ -233,8 +235,8 @@ DJOSER = {
     "USER_CREATE_PASSWORD_RETYPE": True,
     "USERNAME_CHANGED_EMAIL_CONFIRMATION": True,
     "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
-    "PASSWORD_RESET_CONFIRM_URL": "password-reset/{uid}/{token}",
-    "USERNAME_RESET_CONFIRM_URL": "email-reset/{uid}/{token}",
+    "PASSWORD_RESET_CONFIRM_URL": "account/auth/password-reset/{uid}/{token}",
+    "USERNAME_RESET_CONFIRM_URL": "account/auth/email-reset/{uid}/{token}",
     "SOCIAL_AUTH_TOKEN_STRATEGY": "djoser.social.token.jwt.TokenStrategy",
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": env.list(
         "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS",
@@ -242,7 +244,7 @@ DJOSER = {
             "http://localhost:3000",
         ],
     ),
-    "ACTIVATION_URL": "activate/{uid}/{token}",
+    "ACTIVATION_URL": "account/auth/activate/{uid}/{token}",
     "SERIALIZERS": {
         "user_create_password_retype": "apps.users.api.serializers.CustomUserCreatePasswordRetypeSerializer",
         "user": "apps.users.api.serializers.CustomUserSerializer",
@@ -291,4 +293,47 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
     }
+}
+
+# CUSTOM ADMIN SECTION
+JAZZMIN_SETTINGS = {
+    "site_title": "Spotify Admin",
+    "site_header": "Spotify",
+    "site_brand": "Spotify",
+    "site_logo_classes": "img-circle",
+    "welcome_sign": "Welcome to Spotify Admin",
+    "copyright": "Copyright by Spotify",
+    "show_ui_builder": True,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": True,
+    "brand_small_text": False,
+    "brand_colour": "navbar-success",
+    "accent": "accent-teal",
+    "navbar": "navbar-success navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-olive",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "cyborg",
+    "dark_mode_theme": "cyborg",
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success",
+    },
 }

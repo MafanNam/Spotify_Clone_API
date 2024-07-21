@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django_countries.serializer_fields import CountryField
 from django_countries.serializers import CountryFieldMixin
 from djoser.serializers import UserCreatePasswordRetypeSerializer, UserSerializer
 from rest_framework import serializers
@@ -16,7 +15,6 @@ class CustomUserCreatePasswordRetypeSerializer(CountryFieldMixin, UserCreatePass
 class CustomUserSerializer(CountryFieldMixin, UserSerializer):
     type_profile = serializers.CharField(source="get_type_profile_display", read_only=True)
     gender = serializers.CharField(source="get_gender_display", read_only=True)
-    country = CountryField(name_only=True)
     followers_count = serializers.IntegerField(source="followers.count", read_only=True)
     following_count = serializers.IntegerField(source="following.count", read_only=True)
     playlists_count = serializers.IntegerField(source="playlists.count", read_only=True)
@@ -42,7 +40,7 @@ class CustomUserSerializer(CountryFieldMixin, UserSerializer):
         read_only_fields = ("email", "type_profile", "is_premium", "color")
 
 
-class CustomUserUpdateSerializer(serializers.ModelSerializer):
+class CustomUserUpdateSerializer(CountryFieldMixin, serializers.ModelSerializer):
     class Meta(UserSerializer.Meta):
         model = User
         fields = (
@@ -50,9 +48,12 @@ class CustomUserUpdateSerializer(serializers.ModelSerializer):
             "email",
             "display_name",
             "gender",
+            "image",
+            "type_profile",
             "country",
             "is_premium",
         )
+        read_only_fields = ("email", "type_profile", "is_premium")
 
 
 class ShortCustomUserSerializer(CustomUserSerializer):
