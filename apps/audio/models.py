@@ -1,10 +1,9 @@
-from datetime import timedelta
+from datetime import date, timedelta
 
 from autoslug import AutoSlugField
 from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from mutagen import File
 
@@ -88,7 +87,7 @@ class Track(TimeStampedModel):
         _("release date"),
         null=True,
         blank=True,
-        default=timezone.now,
+        default=date.today,
     )
 
     class Meta:

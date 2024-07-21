@@ -117,7 +117,8 @@ class MyPlaylistListCreateAPIView(generics.ListCreateAPIView):
         )
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        playlist = serializer.save(user=self.request.user)
+        FavoritePlaylist.objects.create(user=self.request.user, playlist=playlist)
 
 
 class MyPlaylistDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -127,7 +128,6 @@ class MyPlaylistDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     """
 
     permission_classes = [IsOwnerUserPermission]
-    serializer_class = UpdatePlaylistSerializer
     lookup_field = "slug"
 
     def get_queryset(self):
@@ -136,6 +136,16 @@ class MyPlaylistDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             .prefetch_related("tracks", "tracks__artist", "tracks__album", "tracks__genre")
             .filter(user=self.request.user)
         )
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return PlaylistSerializer
+        else:
+            return UpdatePlaylistSerializer
+
+    def perform_destroy(self, instance):
+        FavoritePlaylist.objects.filter(user=self.request.user, playlist=instance).delete()
+        instance.delete()
 
 
 class PlaylistFavoriteListAPIView(generics.ListAPIView):

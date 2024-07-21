@@ -39,7 +39,7 @@ class PlaylistSerializer(serializers.ModelSerializer):
 
 
 class UpdatePlaylistSerializer(PlaylistSerializer):
-    genre = serializers.PrimaryKeyRelatedField(queryset=Genre.objects.all())
+    genre = serializers.PrimaryKeyRelatedField(queryset=Genre.objects.all(), required=False)
 
     class Meta:
         model = Playlist
