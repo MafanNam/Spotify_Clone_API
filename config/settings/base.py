@@ -184,7 +184,7 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 SPECTACULAR_SETTINGS = {
     "TITLE": "Spotify Clone API",
     "DESCRIPTION": "This is the Spotify-Clone-API project, which is a clone of the Spotify web service."
-                   " This API implements a basic set of functionalities allowing users to interact with the platform.",
+    " This API implements a basic set of functionalities allowing users to interact with the platform.",
     "VERSION": "0.1",
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
@@ -334,6 +334,6 @@ JAZZMIN_UI_TWEAKS = {
         "info": "btn-info",
         "warning": "btn-warning",
         "danger": "btn-danger",
-        "success": "btn-success"
-    }
+        "success": "btn-success",
+    },
 }

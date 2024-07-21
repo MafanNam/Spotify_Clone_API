@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django_countries.serializer_fields import CountryField
 from django_countries.serializers import CountryFieldMixin
 from djoser.serializers import UserCreatePasswordRetypeSerializer, UserSerializer
 from rest_framework import serializers
