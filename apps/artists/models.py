@@ -31,7 +31,7 @@ class Artist(TimeStampedModel):
         upload_to=get_path_upload_image_artist,
         validators=[validate_image_size],
         blank=True,
-        default="default/artist.jpg",
+        default="default/profile.jpeg",
     )
     color = ColorField(default="#202020")
     is_verify = models.BooleanField(_("is verify"), default=False)

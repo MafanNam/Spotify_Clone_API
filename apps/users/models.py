@@ -49,7 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         upload_to=get_path_upload_image_user,
         validators=[validate_image_size],
         blank=True,
-        default="default/profile.jpg",
+        default="default/profile.jpeg",
     )
     color = ColorField(default="#202020")
     country = CountryField(
