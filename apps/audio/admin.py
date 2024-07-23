@@ -9,6 +9,7 @@ class TrackAdmin(admin.ModelAdmin):
         "id",
         "title",
         "artist",
+        "album",
         "duration",
         "license",
         "genre",

@@ -96,10 +96,9 @@ class Track(TimeStampedModel):
         ordering = ["-created_at", "-updated_at"]
 
     def save(self, *args, **kwargs):
-        if self.file and not self.duration:
+        if self.file:
             audio = File(self.file)
             if audio is not None:
-                print(audio.info)
                 self.duration = timedelta(seconds=audio.info.length)
         if self.image:
             self.color = generate_color_from_image(self.image)

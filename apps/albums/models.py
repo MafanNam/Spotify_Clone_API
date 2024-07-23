@@ -43,7 +43,7 @@ class Album(TimeStampedModel):
     class Meta:
         verbose_name = _("album")
         verbose_name_plural = _("albums")
-        ordering = ["-created_at", "-updated_at"]
+        ordering = ["-updated_at", "-created_at"]
 
     @property
     def total_duration(self):
