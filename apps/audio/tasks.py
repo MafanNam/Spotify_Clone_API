@@ -1,8 +1,8 @@
 import logging
 
 from config import celery_app as app
+
 # from pydub import AudioSegment
-import os
 
 logger = logging.getLogger(__name__)
 
