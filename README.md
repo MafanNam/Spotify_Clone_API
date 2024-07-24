@@ -4,17 +4,19 @@ This is the repository for the Spotify_Clone_API project, which is a clone of th
 implements
 a basic set of functionalities allowing users to interact with the platform.
 
-![Spotify title]()
+![Spotify title](https://raw.githubusercontent.com/MafanNam/Spotify_Clone_API/main/assets/spotify_data_flow.svg)
 
 ### Diagram DB
 
-![Spotify diagram DB]()
+![Spotify diagram DB](https://raw.githubusercontent.com/MafanNam/Spotify_Clone_API/main/assets/db_diagram.svg)
 
 ## Description
 
 Spotify_Clone_API is developed using Django, one of the most popular frameworks for building web applications in Python.
 This API provides features such as user registration, advertisement creation, user profile management, and other core
 functionalities.
+
+![Spotify front](https://raw.githubusercontent.com/MafanNam/Spotify_Clone_API/main/assets/spotify_front.png)
 
 ## Requirements
 
@@ -161,7 +163,12 @@ $ docker compose -f local.yml run --rm server coverage html
 
 The API documentation is not available [localhost:8080](http://localhost:8080).
 
-![Spotify endpoints]()
+![Spotify swagger](https://raw.githubusercontent.com/MafanNam/Spotify_Clone_API/main/assets/swagger.png)
+![Spotify redoc](https://raw.githubusercontent.com/MafanNam/Spotify_Clone_API/main/assets/redoc.png)
+
+## Custom Admin
+
+![Spotify admin](https://raw.githubusercontent.com/MafanNam/Spotify_Clone_API/main/assets/admin.png)
 
 ## Author
 
