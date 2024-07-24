@@ -39,7 +39,7 @@ class Artist(TimeStampedModel):
     class Meta:
         verbose_name = _("Artist")
         verbose_name_plural = _("Artists")
-        ordering = ["-created_at", "-updated_at"]
+        ordering = ["-updated_at", "-created_at"]
 
     def save(self, *args, **kwargs):
         if self.display_name == "" or self.display_name is None:

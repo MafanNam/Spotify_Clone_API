@@ -58,7 +58,7 @@ class Playlist(TimeStampedModel):
     class Meta:
         verbose_name = _("Playlist")
         verbose_name_plural = _("Playlists")
-        ordering = ["-created_at", "-updated_at"]
+        ordering = ["-updated_at", "-created_at"]
 
     def save(self, *args, **kwargs):
         if not self.title:
