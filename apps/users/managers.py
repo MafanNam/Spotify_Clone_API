@@ -1,5 +1,4 @@
 from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils.translation import gettext_lazy as _
@@ -42,7 +41,8 @@ class CustomUserManager(BaseUserManager):
         if not password:
             raise ValueError(_("Superuser must have a password."))
 
-        validate_password(password)  # Validate the strength of the password
+        # TODO: uncomment after dev
+        # validate_password(password)  # Validate the strength of the password
 
         if email:
             email = self.normalize_email(email)

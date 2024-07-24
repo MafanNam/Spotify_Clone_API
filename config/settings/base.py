@@ -184,7 +184,7 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 SPECTACULAR_SETTINGS = {
     "TITLE": "Spotify Clone API",
     "DESCRIPTION": "This is the Spotify-Clone-API project, which is a clone of the Spotify web service."
-    " This API implements a basic set of functionalities allowing users to interact with the platform.",
+                   " This API implements a basic set of functionalities allowing users to interact with the platform.",
     "VERSION": "0.1",
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
@@ -285,15 +285,15 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ["first_name", "last_name"]
 #     }
 # }
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": env("REDIS_CACHE_LOCATION", default="redis://localhost:6379/1"),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        },
-    }
-}
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": env("REDIS_CACHE_LOCATION", default="redis://localhost:6379/1"),
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         },
+#     }
+# }
 
 # CUSTOM ADMIN SECTION
 JAZZMIN_SETTINGS = {

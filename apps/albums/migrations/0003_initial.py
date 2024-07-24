@@ -10,23 +10,20 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("payments", "0001_initial"),
+        ("albums", "0002_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="payment",
+            model_name="favoritealbum",
             name="user",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, related_name="payments", to=settings.AUTH_USER_MODEL
+                on_delete=django.db.models.deletion.CASCADE, related_name="favorite_albums", to=settings.AUTH_USER_MODEL
             ),
         ),
-        migrations.AddField(
-            model_name="payment",
-            name="tax",
-            field=models.ForeignKey(
-                null=True, on_delete=django.db.models.deletion.SET_NULL, related_name="payments", to="payments.tax"
-            ),
+        migrations.AlterUniqueTogether(
+            name="favoritealbum",
+            unique_together={("user", "album")},
         ),
     ]

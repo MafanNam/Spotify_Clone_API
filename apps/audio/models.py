@@ -30,7 +30,7 @@ class Track(TimeStampedModel):
         verbose_name=_("artist"),
         default="",
     )
-    title = models.CharField(_("title"), max_length=255, unique=True)
+    title = models.CharField(_("title"), max_length=255)
     slug = AutoSlugField(populate_from="title", unique=True)
     duration = models.DurationField(_("duration"), null=True, blank=True)
     image = models.ImageField(
@@ -93,13 +93,12 @@ class Track(TimeStampedModel):
     class Meta:
         verbose_name = _("Track")
         verbose_name_plural = _("Tracks")
-        ordering = ["-created_at", "-updated_at"]
+        ordering = ["-updated_at"]
 
     def save(self, *args, **kwargs):
-        if self.file and not self.duration:
+        if self.file:
             audio = File(self.file)
             if audio is not None:
-                print(audio.info)
                 self.duration = timedelta(seconds=audio.info.length)
         if self.image:
             self.color = generate_color_from_image(self.image)

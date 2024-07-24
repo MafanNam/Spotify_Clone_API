@@ -31,7 +31,7 @@ class Artist(TimeStampedModel):
         upload_to=get_path_upload_image_artist,
         validators=[validate_image_size],
         blank=True,
-        default="default/artist.jpg",
+        default="default/profile.jpeg",
     )
     color = ColorField(default="#202020")
     is_verify = models.BooleanField(_("is verify"), default=False)
@@ -39,7 +39,7 @@ class Artist(TimeStampedModel):
     class Meta:
         verbose_name = _("Artist")
         verbose_name_plural = _("Artists")
-        ordering = ["-created_at", "-updated_at"]
+        ordering = ["-updated_at", "-created_at"]
 
     def save(self, *args, **kwargs):
         if self.display_name == "" or self.display_name is None:
