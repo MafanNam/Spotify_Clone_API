@@ -161,7 +161,9 @@ $ docker compose -f local.yml run --rm server coverage html
 
 ## API Documentation
 
-The API documentation is not available [localhost:8080](http://localhost:8080).
+The API documentation available
+`Local` [localhost:8000](http://localhost:8000)
+`Docker` [localhost:8080](http://localhost:8080)
 
 ![Spotify swagger](https://raw.githubusercontent.com/MafanNam/Spotify_Clone_API/main/assets/swagger.png)
 ![Spotify redoc](https://raw.githubusercontent.com/MafanNam/Spotify_Clone_API/main/assets/redoc.png)

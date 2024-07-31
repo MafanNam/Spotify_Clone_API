@@ -228,11 +228,10 @@ class DownloadTrackAPIView(views.APIView):
         track = get_object_or_404(Track, slug=self.kwargs.get("slug"), is_private=False)
         if os.path.exists(track.file.path):
             self.set_download(track)
-            return FileResponse(
-                open(track.file.path, "rb"),
-                filename=track.file.name,
-                as_attachment=True,
-            )
+            response = FileResponse(open(track.file.path, "rb"), as_attachment=True)
+            response["Content-Disposition"] = f'attachment; filename="{track.file.name}"'
+            response["X-Filename"] = track.file.name
+            return response
         else:
             return Http404
 
