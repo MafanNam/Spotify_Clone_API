@@ -34,7 +34,6 @@ def set_cookie(response: Response, access_token: str = None, refresh_token: str 
             path=settings.SIMPLE_JWT["AUTH_COOKIE_PATH"],
             secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
             httponly=settings.SIMPLE_JWT["AUTH_COOKIE_HTTP_ONLY"],
-            # httponly=False,
             samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
         )
     if refresh_token:
@@ -81,15 +80,15 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             email_ = request.data["email"]
             password = request.data["password"]
         except KeyError:
-            return Response({"msg": "email and/or password not provided."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "email and/or password not provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         if authenticate(email=email_, password=password) is None:
             user = get_object_or_404(User, email=email_)
 
             if not user.is_active:
-                return Response({"msg": "user is not active."}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({"detail": "user is not active."}, status=status.HTTP_401_UNAUTHORIZED)
 
-            return Response({"msg": "user password wrong."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"detail": "user password wrong."}, status=status.HTTP_401_UNAUTHORIZED)
 
         if response.status_code == 200:
             access_token = response.data.get("access")
@@ -109,10 +108,12 @@ class CustomTokenRefreshView(TokenRefreshView):
     def post(self, request: Request, *args, **kwargs) -> Response:
         refresh_token = request.COOKIES.get("refresh")
 
-        if refresh_token:
+        if request.data.get("refresh"):
+            pass
+        elif refresh_token:
             request.data["refresh"] = refresh_token
         else:
-            return Response({"msg": "refresh token not provided"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"detail": "refresh token not provided"}, status=status.HTTP_401_UNAUTHORIZED)
 
         response = super().post(request, *args, **kwargs)
 
@@ -135,10 +136,12 @@ class CustomTokenVerifyView(TokenVerifyView):
     def post(self, request: Request, *args, **kwargs) -> Response:
         access_token = request.COOKIES.get("access")
 
-        if access_token:
+        if request.data.get("token"):
+            pass
+        elif access_token:
             request.data["token"] = access_token
         else:
-            return Response({"msg": "access token not provided"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"detail": "access token not provided"}, status=status.HTTP_401_UNAUTHORIZED)
 
         return super().post(request, *args, **kwargs)
 
